@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 @Builder
-@Getter @Setter
+@Data
 @AllArgsConstructor
 public class Movie {
     private Long id;

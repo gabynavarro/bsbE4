@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-@Repository
+
 public class MovieRepositoryImpl implements MovieRepository {
 
     private  final String[] nameCharater = {"Robert-Downey", "Chris-Evans", "Chris-Hemsworth",

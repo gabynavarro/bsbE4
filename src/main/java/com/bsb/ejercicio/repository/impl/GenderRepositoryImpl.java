@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-@Repository
+
 public class GenderRepositoryImpl implements GenderRepository{
     private   List<Gender> addGender() {
         return Arrays.asList(new Gender(1L, "Suspenso"),

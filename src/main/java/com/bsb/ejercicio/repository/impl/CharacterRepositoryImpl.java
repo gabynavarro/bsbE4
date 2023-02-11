@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-@Repository
+
 public class CharacterRepositoryImpl implements CharacterRepository {
     private  final String[] nameCharater = {"Robert-Downey", "Chris-Evans", "Chris-Hemsworth",
             "Paul-Rudd", "Michael-Douglas",

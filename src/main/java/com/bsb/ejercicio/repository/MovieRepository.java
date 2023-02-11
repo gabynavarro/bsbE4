@@ -1,10 +1,11 @@
 package com.bsb.ejercicio.repository;
 
 import com.bsb.ejercicio.model.entity.Movie;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
-
+@Repository
 public interface MovieRepository {
     List<Movie> findTitle(String title);
 

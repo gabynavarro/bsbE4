@@ -49,7 +49,7 @@ public class MovieController {
     }
 
     @PostMapping()
-    public ResponseEntity<List<MovieResponse>> movieAdd(
+    public ResponseEntity<MovieResponse> movieAdd(
             @RequestBody MovieRequest movie) {
         return ResponseEntity.status(HttpStatus.OK).body(movieService.movieCreate(movie));
     }

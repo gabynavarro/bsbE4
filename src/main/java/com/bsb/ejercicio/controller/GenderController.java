@@ -21,7 +21,7 @@ public class GenderController {
         return  ResponseEntity.status(HttpStatus.OK).body(genderService.getAll());
     }
     @PostMapping
-    public ResponseEntity<List<GenderResponse>> genderAdd(
+    public ResponseEntity<GenderResponse> genderAdd(
             @RequestBody GenderRequest gender) {
         return ResponseEntity.status(HttpStatus.OK).body(genderService.genderCreate(gender));
     }

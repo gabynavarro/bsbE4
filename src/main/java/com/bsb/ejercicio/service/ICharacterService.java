@@ -10,7 +10,7 @@ public interface ICharacterService {
       List<CharacterResponse> getAll();
       List<CharacterResponse> findByAge(int age);
       List<CharacterResponse> findByRangeAge(int from, int to);
-      List<CharacterResponse> characterCreate(CharacterRequest character);
+      CharacterResponse characterCreate(CharacterRequest character);
       CharacterResponse findById(Long id);
       CharacterResponse update(Long id, CharacterRequest character);
 }

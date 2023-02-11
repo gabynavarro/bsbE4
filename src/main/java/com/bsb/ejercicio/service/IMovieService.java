@@ -12,7 +12,7 @@ public interface IMovieService {
      List<MovieResponse> findByGender(String gender);
      List<MovieResponse> findByDate(LocalDate from, LocalDate to);
      List<MovieResponse> findByScore(int from, int to);
-     List<MovieResponse> movieCreate(MovieRequest movie);
+     MovieResponse movieCreate(MovieRequest movie);
      MovieResponse findById(Long id);
      MovieResponse update(Long id, MovieRequest movie);
 }

@@ -23,7 +23,7 @@ public class GenderServiceImpl implements IGenderService {
     @Override
     public List<GenderResponse> getAll() {
         try {
-            return converTo(genderRepository.getGenderAll());
+            return converTo(genderRepository.findAll());
         } catch (Exception e) {
             throw new RuntimeException(ERROR_NOT_FOUND);
         }
@@ -34,10 +34,10 @@ public class GenderServiceImpl implements IGenderService {
                 .collect(Collectors.toList());
     }
     @Override
-    public List<GenderResponse> genderCreate(GenderRequest gender) {
+    public GenderResponse genderCreate(GenderRequest gender) {
         try {
             Gender g=genderMapper.toEntity(gender);
-            return converTo(genderRepository.genderCreate(g));
+            return genderMapper.toResponse(genderRepository.save(g));
         } catch (Exception e) {
             throw new RuntimeException(ERROR_NOT_FOUND);
         }
@@ -46,7 +46,7 @@ public class GenderServiceImpl implements IGenderService {
     @Override
     public GenderResponse findById(Long id) {
         try {
-            return  genderMapper.toResponse(genderRepository.findById(id));
+            return  genderMapper.toResponse(genderRepository.findById(id).orElse(null));
         } catch (Exception e) {
             throw new RuntimeException(ERROR_NOT_FOUND);
         }
@@ -55,7 +55,7 @@ public class GenderServiceImpl implements IGenderService {
     @Override
     public GenderResponse update(Long id, GenderRequest gender) {
         try {
-            Gender m = genderRepository.findById(id);
+            Gender m = genderRepository.findById(id).orElse(null);
             if (!Validations.validationString(gender.getName()))
                 throw new RuntimeException("He entered an invalid name");
             if (m != null) {

@@ -1,14 +1,11 @@
 package com.bsb.ejercicio.repository;
 
 import com.bsb.ejercicio.model.entity.Gender;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 @Repository
-public interface GenderRepository {
-    List<Gender> getGenderAll();
+public interface GenderRepository extends JpaRepository<Gender, Long> {
 
-    List<Gender> genderCreate(Gender gender);
 
-    Gender findById(Long id);
 }

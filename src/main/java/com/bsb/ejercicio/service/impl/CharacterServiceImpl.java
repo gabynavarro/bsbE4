@@ -38,7 +38,7 @@ public class CharacterServiceImpl implements ICharacterService {
         try {
             if (name == null && !Validations.validationString(name))
                 throw new NullPointerException("Character name can't be null or contains invalid characters");
-            return this.converTo(characterRepository.findName(name));
+            return this.converTo(characterRepository.findByName(name));
 
         } catch (Exception e) {
             throw new RuntimeException(ERROR_NOT_FOUND);
@@ -48,7 +48,7 @@ public class CharacterServiceImpl implements ICharacterService {
     @Override
     public List<CharacterResponse> getAll() {
         try {
-            return this.converTo(characterRepository.findCharAll());
+            return this.converTo(characterRepository.findAll());
         } catch (Exception e) {
             throw new RuntimeException(ERROR_NOT_FOUND);
         }
@@ -70,7 +70,8 @@ public class CharacterServiceImpl implements ICharacterService {
     @Override
     public List<CharacterResponse> findByRangeAge(int from, int to) {
         try {
-            return this.converTo(characterRepository.findByRangeAge(from, to));
+         //   return this.converTo(characterRepository.findByRangeAge(from, to));
+            return null;
 
         } catch (Exception e) {
             throw new RuntimeException(ERROR_NOT_FOUND);
@@ -78,9 +79,9 @@ public class CharacterServiceImpl implements ICharacterService {
     }
 
     @Override
-    public List<CharacterResponse> characterCreate(CharacterRequest character) {
+    public CharacterResponse characterCreate(CharacterRequest character) {
         List<Movie> listMovie=new ArrayList<>();
-        if(!characterRepository.findName(character.getName()).isEmpty()){
+        if(!characterRepository.findByName(character.getName()).isEmpty()){
             throw new RuntimeException("Character exist!");
         }
         if (!Validations.validateCharacterEntity(character))
@@ -89,7 +90,7 @@ public class CharacterServiceImpl implements ICharacterService {
 
             Character c = characterMapper.toCharacter(character);
             for (String  m: character.getListMovies() ) {
-                Movie movie= movieRepository.findById(Long.valueOf(m));
+                Movie movie= movieRepository.findById(Long.valueOf(m)).orElse(null);
                 if(movie!=null){
                     listMovie.add(movie);
                 }
@@ -98,7 +99,7 @@ public class CharacterServiceImpl implements ICharacterService {
                 c.setListMovie(new ArrayList<>());
             }else c.setListMovie(listMovie);
 
-            return this.converTo(characterRepository.characterCreate(c));
+            return characterMapper.toResponse(characterRepository.save(c));
         } catch (Exception e) {
             throw new RuntimeException(ERROR_NOT_FOUND);
         }
@@ -107,7 +108,7 @@ public class CharacterServiceImpl implements ICharacterService {
     @Override
     public CharacterResponse findById(Long id) {
         try {
-            return characterMapper.toResponse(characterRepository.findById(id));
+            return characterMapper.toResponse(characterRepository.findById(id).orElse(null));
         } catch (Exception e) {
             throw new RuntimeException(ERROR_NOT_FOUND);
         }
@@ -116,7 +117,7 @@ public class CharacterServiceImpl implements ICharacterService {
     @Override
     public CharacterResponse update(Long id, CharacterRequest character) {
         try {
-            Character c = characterRepository.findById(id);
+            Character c = characterRepository.findById(id).orElse(null);
             if (!Validations.validateCharacterEntity(character))
                 throw new RuntimeException(ERROR_NOT_VALIDATE);
             if (c != null) {

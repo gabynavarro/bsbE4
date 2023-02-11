@@ -37,7 +37,7 @@ public class CharacterController {
     }
 
     @PostMapping
-    public ResponseEntity<List<CharacterResponse>> characterAdd(
+    public ResponseEntity<CharacterResponse> characterAdd(
             @RequestBody CharacterRequest character) {
         return ResponseEntity.status(HttpStatus.OK).body(characterService.characterCreate(character));
     }

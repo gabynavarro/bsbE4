@@ -42,7 +42,7 @@ public class MovieServiceImpl implements IMovieService {
         if (title == null && !Validations.validationString(title))
             throw new NullPointerException("Movie name can't be null or contains invalid characters");
         try {
-            return converTo(movieRepository.findTitle(title));
+            return converTo(movieRepository.findByTitle(title));
         } catch (Exception e) {
             throw new RuntimeException(ERROR_NOT_FOUND);
         }
@@ -51,7 +51,7 @@ public class MovieServiceImpl implements IMovieService {
     @Override
     public List<MovieResponse> getAll() {
         try {
-            return converTo(movieRepository.getAll());
+            return converTo(movieRepository.findAll());
         } catch (Exception e) {
             throw new RuntimeException(ERROR_NOT_FOUND);
         }
@@ -72,7 +72,8 @@ public class MovieServiceImpl implements IMovieService {
     @Override
     public List<MovieResponse> findByDate(LocalDate from, LocalDate to) {
         try {
-            return converTo(movieRepository.findByDate(from, to));
+          //  return converTo(movieRepository.findByDate(from, to));
+            return null;
         } catch (Exception e) {
             throw new RuntimeException(ERROR_NOT_FOUND);
         }
@@ -81,7 +82,8 @@ public class MovieServiceImpl implements IMovieService {
     @Override
     public List<MovieResponse> findByScore(int from, int to) {
         try {
-            return converTo(movieRepository.findByScore(from, to));
+         //   return converTo(movieRepository.findByScore(from, to));
+            return null;
 
         } catch (Exception e) {
             throw new RuntimeException(ERROR_NOT_FOUND);
@@ -89,17 +91,17 @@ public class MovieServiceImpl implements IMovieService {
     }
 
     @Override
-    public List<MovieResponse> movieCreate(MovieRequest movie) {
+    public MovieResponse movieCreate(MovieRequest movie) {
         List<Character> listCharacter=new ArrayList<>();
         if (!Validations.validateMovieEntity(movie))
             throw new RuntimeException(ERROR_NOT_VALIDATE);
-        if(!movieRepository.findTitle(movie.getTitle()).isEmpty()){
+        if(!movieRepository.findByTitle(movie.getTitle()).isEmpty()){
             throw new RuntimeException("Movie exist!");
         }
         try {
             Movie m = movieMapper.toEntity(movie);
             for (String  c: movie.getIdCharacters()) {
-                Character  character = characterRepository.findById(Long.valueOf(c));
+                Character  character = characterRepository.findById(Long.valueOf(c)).orElse(null);
                 if(character!=null){
                     listCharacter.add(character);
                 }
@@ -107,8 +109,8 @@ public class MovieServiceImpl implements IMovieService {
             if (listCharacter.isEmpty()){
                 m.setCharacter(new ArrayList<>());
             }else m.setCharacter(listCharacter);
-            m.setGender(genderRepository.findById(movie.getGender()));
-            return converTo(movieRepository.movieCreate(m));
+            m.setGender(genderRepository.findById(movie.getGender()).orElse(null));
+            return movieMapper.toMovieResponse(movieRepository.save(m));
         } catch (Exception e) {
             throw new RuntimeException(ERROR_NOT_FOUND);
         }
@@ -117,7 +119,7 @@ public class MovieServiceImpl implements IMovieService {
     @Override
     public MovieResponse findById(Long id) {
         try {
-            return movieMapper.toMovieResponse(movieRepository.findById(id));
+            return movieMapper.toMovieResponse(movieRepository.findById(id).orElse(null));
 
         } catch (Exception e) {
             throw new RuntimeException(ERROR_NOT_FOUND);
@@ -129,7 +131,7 @@ public class MovieServiceImpl implements IMovieService {
         if (!Validations.validateMovieEntity(movie))
             throw new RuntimeException(ERROR_NOT_VALIDATE);
         try {
-            Movie m = movieRepository.findById(id);
+            Movie m = movieRepository.findById(id).orElse(null);
             if (m != null) {
                 m.setTitle(movie.getTitle());
                 m.setDate(movie.getDate());

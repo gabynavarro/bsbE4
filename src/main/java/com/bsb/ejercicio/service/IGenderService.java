@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface IGenderService {
     List<GenderResponse> getAll();
-    List<GenderResponse> genderCreate(GenderRequest gender);
+    GenderResponse genderCreate(GenderRequest gender);
     GenderResponse findById(Long id);
     GenderResponse update(Long id, GenderRequest gender);
 }

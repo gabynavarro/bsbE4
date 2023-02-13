@@ -1,5 +1,7 @@
 package com.bsb.ejercicio.controller;
 
+import com.bsb.ejercicio.exception.BadRequestException;
+import com.bsb.ejercicio.exception.ErrorProcessException;
 import com.bsb.ejercicio.model.request.CharacterRequest;
 import com.bsb.ejercicio.model.response.character.CharacterResponse;
 import com.bsb.ejercicio.service.ICharacterService;
@@ -16,36 +18,36 @@ public class CharacterController {
     @Autowired
     private ICharacterService characterService;
     @GetMapping("name")
-    public ResponseEntity<List<CharacterResponse>> getCharacterName(@RequestParam(value = "name", required = false) String name) {
+    public ResponseEntity<List<CharacterResponse>> getCharacterName(@RequestParam(value = "name", required = false) String name) throws ErrorProcessException {
         return ResponseEntity.status(HttpStatus.OK).body(characterService.findName(name));
     }
 
     @GetMapping
-    public ResponseEntity<List<CharacterResponse>> getCharacter() {
+    public ResponseEntity<List<CharacterResponse>> getCharacter() throws ErrorProcessException {
         return ResponseEntity.status(HttpStatus.OK).body(characterService.getAll());
     }
 
     @GetMapping(value = "/age/{age}")
-    public ResponseEntity<List<CharacterResponse>> getCharacterAge(@PathVariable int age) {
+    public ResponseEntity<List<CharacterResponse>> getCharacterAge(@PathVariable int age) throws ErrorProcessException {
         return ResponseEntity.status(HttpStatus.OK).body(characterService.findByAge(age));
     }
 
     @GetMapping(value = "age")
     public ResponseEntity<List<CharacterResponse>> getCharacterRangeAge(
-            @RequestParam int from, @RequestParam int to) {
+            @RequestParam int from, @RequestParam int to) throws ErrorProcessException {
         return ResponseEntity.status(HttpStatus.OK).body(characterService.findByRangeAge(from, to));
     }
 
     @PostMapping
     public ResponseEntity<CharacterResponse> characterAdd(
-            @RequestBody CharacterRequest character) {
+            @RequestBody CharacterRequest character) throws BadRequestException, ErrorProcessException {
         return ResponseEntity.status(HttpStatus.OK).body(characterService.characterCreate(character));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<CharacterResponse> update(
             @RequestBody CharacterRequest character,
-            @PathVariable Long id) {
+            @PathVariable Long id) throws ErrorProcessException {
         return ResponseEntity.status(HttpStatus.OK).body(characterService.update(id, character));
     }
 }

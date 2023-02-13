@@ -1,6 +1,7 @@
 package com.bsb.ejercicio.controller;
 
 import com.bsb.ejercicio.exception.BadRequestException;
+import com.bsb.ejercicio.exception.ErrorProcessException;
 import com.bsb.ejercicio.model.entity.Gender;
 import com.bsb.ejercicio.model.request.GenderRequest;
 import com.bsb.ejercicio.model.response.GenderResponse;
@@ -18,16 +19,16 @@ public class GenderController {
     @Autowired
     private IGenderService genderService;
     @GetMapping
-    public  ResponseEntity<List<GenderResponse>> getAll() {
+    public  ResponseEntity<List<GenderResponse>> getAll() throws ErrorProcessException {
         return  ResponseEntity.status(HttpStatus.OK).body(genderService.getAll());
     }
     @PostMapping
     public ResponseEntity<GenderResponse> genderAdd(
-            @RequestBody GenderRequest gender) throws BadRequestException {
+            @RequestBody GenderRequest gender) throws BadRequestException, ErrorProcessException {
         return ResponseEntity.status(HttpStatus.OK).body(genderService.genderCreate(gender));
     }
     @GetMapping(value = "{id}")
-    public  ResponseEntity<GenderResponse> getGenderId(@PathVariable Long id) {
+    public  ResponseEntity<GenderResponse> getGenderId(@PathVariable Long id) throws ErrorProcessException {
         return ResponseEntity.status(HttpStatus.OK).body(genderService.findById(id));
     }
 }

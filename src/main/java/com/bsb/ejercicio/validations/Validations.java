@@ -21,8 +21,7 @@ public class Validations {
         return age < 120;
     }
     public static boolean validateMovieEntity(MovieRequest movie){
-        if(validationString(movie.getTitle())) return true;
-        if(movie.getScore()<0&&movie.getScore()>5) return true;
+        if(movie.getScore()>0&&movie.getScore()<6) return true;
         return false;
     } public static boolean validateCharacterEntity(CharacterRequest character){
         if(!validationString(character.getName())) return true;

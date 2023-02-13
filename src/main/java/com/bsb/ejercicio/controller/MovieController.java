@@ -1,5 +1,8 @@
 package com.bsb.ejercicio.controller;
 
+import com.bsb.ejercicio.exception.BadRequestException;
+import com.bsb.ejercicio.exception.ErrorProcessException;
+import com.bsb.ejercicio.exception.NotFoundException;
 import com.bsb.ejercicio.model.request.MovieRequest;
 import com.bsb.ejercicio.model.response.movie.MovieResponse;
 import com.bsb.ejercicio.service.IMovieService;
@@ -18,17 +21,17 @@ public class MovieController {
     @Autowired
     private IMovieService movieService;
     @GetMapping("title")
-    public ResponseEntity<List<MovieResponse>> getMovieTitle(@RequestParam(name = "title", required = false) String title) {
+    public ResponseEntity<MovieResponse> getMovieTitle(@RequestParam(name = "title", required = false) String title) throws ErrorProcessException {
         return ResponseEntity.status(HttpStatus.OK).body(movieService.findTitle(title));
     }
 
     @GetMapping
-    public ResponseEntity<List<MovieResponse>> getMovieAll() {
+    public ResponseEntity<List<MovieResponse>> getMovieAll() throws NotFoundException, ErrorProcessException {
         return ResponseEntity.status(HttpStatus.OK).body(movieService.getAll());
     }
 
     @GetMapping("{gender}")
-    public ResponseEntity<List<MovieResponse>> getMovieGender(@PathVariable String gender) {
+    public ResponseEntity<List<MovieResponse>> getMovieGender(@PathVariable String gender) throws ErrorProcessException {
         return ResponseEntity.status(HttpStatus.OK).body(movieService.findByGender(gender));
     }
 
@@ -36,7 +39,7 @@ public class MovieController {
     public ResponseEntity<List<MovieResponse>> getMovieGender(
             @RequestParam(value = "from", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate from,
             @RequestParam(value = "to", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate to
-    ) {
+    ) throws ErrorProcessException {
         return ResponseEntity.status(HttpStatus.OK).body(movieService.findByDate(from, to));
     }
 
@@ -44,20 +47,20 @@ public class MovieController {
     public ResponseEntity<List<MovieResponse>> getMovieGender(
             @RequestParam(value = "from", required = true) int from,
             @RequestParam(value = "to", required = true) int to
-    ) {
+    ) throws ErrorProcessException {
         return ResponseEntity.status(HttpStatus.OK).body(movieService.findByScore(from, to));
     }
 
     @PostMapping()
     public ResponseEntity<MovieResponse> movieAdd(
-            @RequestBody MovieRequest movie) {
+            @RequestBody MovieRequest movie) throws BadRequestException, ErrorProcessException {
         return ResponseEntity.status(HttpStatus.OK).body(movieService.movieCreate(movie));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<MovieResponse> update(
             @RequestBody MovieRequest movie,
-            @PathVariable Long id) {
+            @PathVariable Long id) throws ErrorProcessException {
         return ResponseEntity.status(HttpStatus.OK).body(movieService.update(id, movie));
     }
 }

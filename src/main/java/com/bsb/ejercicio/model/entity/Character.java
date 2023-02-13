@@ -7,6 +7,7 @@ import java.util.List;
 @Builder
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "characters")
 public class Character {

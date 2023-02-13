@@ -1,6 +1,7 @@
 package com.bsb.ejercicio.service.impl;
 
 import com.bsb.ejercicio.exception.BadRequestException;
+import com.bsb.ejercicio.exception.ErrorProcessException;
 import com.bsb.ejercicio.model.entity.Gender;
 import com.bsb.ejercicio.model.mappers.GenderMapper;
 import com.bsb.ejercicio.model.request.GenderRequest;
@@ -32,37 +33,37 @@ public class GenderServiceImpl implements IGenderService {
     }
 
     @Override
-    public List<GenderResponse> getAll() {
+    public List<GenderResponse> getAll() throws ErrorProcessException {
         try {
             return converTo(genderRepository.findAll());
-        } catch (Exception e) {
-            throw new RuntimeException(ERROR_NOT_FOUND);
+        } catch (RuntimeException e) {
+            throw new ErrorProcessException(ERROR_NOT_FOUND +" "+e.getMessage());
         }
     }
 
     @Override
     @Transactional
-    public GenderResponse genderCreate(GenderRequest gender) throws BadRequestException {
+    public GenderResponse genderCreate(GenderRequest gender) throws BadRequestException, ErrorProcessException {
         if (!Validations.validationString(gender.getName().replaceAll("\\s", "")))
             throw new BadRequestException("The gender name is not valid");
         try {
             return genderMapper.toResponse(genderRepository.save(genderMapper.toEntity(gender)));
-        } catch (Exception e) {
-            throw new RuntimeException(ERROR_NOT_FOUND);
+        } catch (RuntimeException e) {
+            throw new ErrorProcessException(ERROR_NOT_FOUND +" "+e.getMessage());
         }
     }
 
     @Override
-    public GenderResponse findById(Long id) {
+    public GenderResponse findById(Long id) throws ErrorProcessException {
         try {
             return genderMapper.toResponse(genderRepository.findById(id).orElse(null));
-        } catch (Exception e) {
-            throw new RuntimeException(ERROR_NOT_FOUND);
+        } catch (RuntimeException e) {
+            throw new ErrorProcessException(ERROR_NOT_FOUND +" "+e.getMessage());
         }
     }
 
     @Override
-    public GenderResponse update(Long id, GenderRequest gender) {
+    public GenderResponse update(Long id, GenderRequest gender) throws ErrorProcessException {
         try {
             Gender m = genderRepository.findById(id).orElse(null);
             if (!Validations.validationString(gender.getName()))
@@ -71,8 +72,8 @@ public class GenderServiceImpl implements IGenderService {
                 m.setName(gender.getName());
                 return genderMapper.toResponse(m);
             } else throw new NullPointerException("The id entered is incorrect or deleted");
-        } catch (Exception e) {
-            throw new RuntimeException(ERROR_NOT_FOUND);
+        } catch (RuntimeException e) {
+            throw new ErrorProcessException(ERROR_NOT_FOUND +" "+e.getMessage());
         }
     }
 }

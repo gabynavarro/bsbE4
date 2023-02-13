@@ -10,6 +10,7 @@ import java.util.List;
 @Builder
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "movies")
 public class Movie {

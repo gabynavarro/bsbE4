@@ -16,6 +16,12 @@ public class ConfigHandlerException {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(buildResponse(e, HttpStatus.NOT_FOUND));
     }
+    @ExceptionHandler(ErrorProcessException.class)
+    public ResponseEntity<?> handleEnteredDataConflict(HttpServletRequest request,
+                                                       ErrorProcessException e){
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(buildResponse(e, HttpStatus.INTERNAL_SERVER_ERROR));
+    }
 
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<?> handleBadRequest(HttpServletRequest request, BadRequestException e){

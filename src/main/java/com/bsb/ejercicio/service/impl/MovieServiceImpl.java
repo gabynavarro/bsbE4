@@ -32,11 +32,13 @@ public class MovieServiceImpl implements IMovieService {
     private GenderRepository genderRepository;
     @Autowired
     private MovieMapper movieMapper;
+
     private List<MovieResponse> converTo(List<Movie> list) {       //borrar
         return list.stream()
                 .map(m -> movieMapper.toMovieResponse(m))
                 .collect(Collectors.toList());
     }
+
     @Override
     public List<MovieResponse> findTitle(String title) {
         if (title == null && !Validations.validationString(title))
@@ -59,9 +61,9 @@ public class MovieServiceImpl implements IMovieService {
 
     @Override
     public List<MovieResponse> findByGender(String gender) {
-        if (gender == null && !Validations.validationString(gender)) {
+        if (gender == null && !Validations.validationString(gender))
             throw new NumberFormatException("Movie name gender can't be null or contains invalid characters");
-        }
+
         try {
             return converTo(movieRepository.findByGender(gender));
         } catch (Exception e) {
@@ -72,7 +74,7 @@ public class MovieServiceImpl implements IMovieService {
     @Override
     public List<MovieResponse> findByDate(LocalDate from, LocalDate to) {
         try {
-          //  return converTo(movieRepository.findByDate(from, to));
+            //  return converTo(movieRepository.findByDate(from, to));
             return null;
         } catch (Exception e) {
             throw new RuntimeException(ERROR_NOT_FOUND);
@@ -82,7 +84,7 @@ public class MovieServiceImpl implements IMovieService {
     @Override
     public List<MovieResponse> findByScore(int from, int to) {
         try {
-         //   return converTo(movieRepository.findByScore(from, to));
+            //   return converTo(movieRepository.findByScore(from, to));
             return null;
 
         } catch (Exception e) {
@@ -92,23 +94,23 @@ public class MovieServiceImpl implements IMovieService {
 
     @Override
     public MovieResponse movieCreate(MovieRequest movie) {
-        List<Character> listCharacter=new ArrayList<>();
+        List<Character> listCharacter = new ArrayList<>();
         if (!Validations.validateMovieEntity(movie))
             throw new RuntimeException(ERROR_NOT_VALIDATE);
-        if(!movieRepository.findByTitle(movie.getTitle()).isEmpty()){
+        if (!movieRepository.findByTitle(movie.getTitle()).isEmpty()) {
             throw new RuntimeException("Movie exist!");
         }
         try {
             Movie m = movieMapper.toEntity(movie);
-            for (String  c: movie.getIdCharacters()) {
-                Character  character = characterRepository.findById(Long.valueOf(c)).orElse(null);
-                if(character!=null){
+            for (String c : movie.getIdCharacters()) {
+                Character character = characterRepository.findById(Long.valueOf(c)).orElse(null);
+                if (character != null) {
                     listCharacter.add(character);
                 }
             }
-            if (listCharacter.isEmpty()){
+            if (listCharacter.isEmpty()) {
                 m.setCharacter(new ArrayList<>());
-            }else m.setCharacter(listCharacter);
+            } else m.setCharacter(listCharacter);
             m.setGender(genderRepository.findById(movie.getGender()).orElse(null));
             return movieMapper.toMovieResponse(movieRepository.save(m));
         } catch (Exception e) {

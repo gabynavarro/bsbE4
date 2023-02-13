@@ -1,5 +1,6 @@
 package com.bsb.ejercicio.service.impl;
 
+import com.bsb.ejercicio.exception.BadRequestException;
 import com.bsb.ejercicio.model.entity.Gender;
 import com.bsb.ejercicio.model.mappers.GenderMapper;
 import com.bsb.ejercicio.model.request.GenderRequest;
@@ -10,16 +11,26 @@ import com.bsb.ejercicio.validations.Validations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class GenderServiceImpl implements IGenderService {
-    private  final String ERROR_NOT_FOUND = "An error occurred in the process";
+    private final String ERROR_NOT_FOUND = "An error occurred in the process";
     @Autowired
     private GenderRepository genderRepository;
     @Autowired
     private GenderMapper genderMapper;
+
+
+    private List<GenderResponse> converTo(List<Gender> list) {       //borrar
+        return list.stream()
+                .map(g -> genderMapper.toResponse(g))
+                .collect(Collectors.toList());
+    }
+
     @Override
     public List<GenderResponse> getAll() {
         try {
@@ -28,16 +39,14 @@ public class GenderServiceImpl implements IGenderService {
             throw new RuntimeException(ERROR_NOT_FOUND);
         }
     }
-    private List<GenderResponse> converTo(List<Gender> list) {       //borrar
-        return list.stream()
-                .map(g -> genderMapper.toResponse(g))
-                .collect(Collectors.toList());
-    }
+
     @Override
-    public GenderResponse genderCreate(GenderRequest gender) {
+    @Transactional
+    public GenderResponse genderCreate(GenderRequest gender) throws BadRequestException {
+        if (!Validations.validationString(gender.getName().replaceAll("\\s", "")))
+            throw new BadRequestException("The gender name is not valid");
         try {
-            Gender g=genderMapper.toEntity(gender);
-            return genderMapper.toResponse(genderRepository.save(g));
+            return genderMapper.toResponse(genderRepository.save(genderMapper.toEntity(gender)));
         } catch (Exception e) {
             throw new RuntimeException(ERROR_NOT_FOUND);
         }
@@ -46,7 +55,7 @@ public class GenderServiceImpl implements IGenderService {
     @Override
     public GenderResponse findById(Long id) {
         try {
-            return  genderMapper.toResponse(genderRepository.findById(id).orElse(null));
+            return genderMapper.toResponse(genderRepository.findById(id).orElse(null));
         } catch (Exception e) {
             throw new RuntimeException(ERROR_NOT_FOUND);
         }
@@ -60,7 +69,7 @@ public class GenderServiceImpl implements IGenderService {
                 throw new RuntimeException("He entered an invalid name");
             if (m != null) {
                 m.setName(gender.getName());
-                return  genderMapper.toResponse(m);
+                return genderMapper.toResponse(m);
             } else throw new NullPointerException("The id entered is incorrect or deleted");
         } catch (Exception e) {
             throw new RuntimeException(ERROR_NOT_FOUND);

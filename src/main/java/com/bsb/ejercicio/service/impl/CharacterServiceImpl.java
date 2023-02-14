@@ -14,6 +14,7 @@ import com.bsb.ejercicio.validations.Validations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,14 +37,16 @@ public class CharacterServiceImpl implements ICharacterService {
     }
 
     @Override
-    public List<CharacterResponse> findName(String name) throws ErrorProcessException {
+    public CharacterResponse findName(String name) throws ErrorProcessException {
         try {
             if (name == null && !Validations.validationString(name))
                 throw new NullPointerException("Character name can't be null or contains invalid characters");
-            return this.converTo(characterRepository.findByName(name));
+            Character character = characterRepository.findByName(name)
+                    .orElseThrow(() -> new NullPointerException("The name " + name + " is not found in the database"));
+            return characterMapper.toResponse(character);
 
         } catch (RuntimeException e) {
-            throw new ErrorProcessException(ERROR_NOT_FOUND +" "+e.getMessage());
+            throw new ErrorProcessException(ERROR_NOT_FOUND + " " + e.getMessage());
         }
     }
 
@@ -52,7 +55,7 @@ public class CharacterServiceImpl implements ICharacterService {
         try {
             return this.converTo(characterRepository.findAll());
         } catch (RuntimeException e) {
-            throw new ErrorProcessException(ERROR_NOT_FOUND +" "+e.getMessage());
+            throw new ErrorProcessException(ERROR_NOT_FOUND + " " + e.getMessage());
         }
     }
 
@@ -65,45 +68,45 @@ public class CharacterServiceImpl implements ICharacterService {
             return this.converTo(characterRepository.findByAge(age));
 
         } catch (RuntimeException e) {
-            throw new ErrorProcessException(ERROR_NOT_FOUND +" "+e.getMessage());
+            throw new ErrorProcessException(ERROR_NOT_FOUND + " " + e.getMessage());
         }
     }
 
     @Override
     public List<CharacterResponse> findByRangeAge(int from, int to) throws ErrorProcessException {
         try {
-         //   return this.converTo(characterRepository.findByRangeAge(from, to));
-            return null;
-
+            List<Character> characters = characterRepository.findByRangeAge(from, to);
+            return this.converTo(characters);
         } catch (RuntimeException e) {
-            throw new ErrorProcessException(ERROR_NOT_FOUND +" "+e.getMessage());
+            throw new ErrorProcessException(ERROR_NOT_FOUND + " " + e.getMessage());
         }
     }
 
     @Override
+    @Transactional
     public CharacterResponse characterCreate(CharacterRequest character) throws ErrorProcessException, BadRequestException {
-        List<Movie> listMovie=new ArrayList<>();
-        if(!characterRepository.findByName(character.getName()).isEmpty()){
+        List<Movie> listMovie = new ArrayList<>();
+        if (!characterRepository.findByName(character.getName()).isEmpty()) {
             throw new BadRequestException("Character exist!");
         }
-        if (!Validations.validateCharacterEntity(character))
+        if (Validations.validateCharacterEntity(character))
             throw new BadRequestException(ERROR_NOT_VALIDATE);
         try {
 
             Character c = characterMapper.toCharacter(character);
-            for (String  m: character.getListMovies() ) {
-                Movie movie= movieRepository.findById(Long.valueOf(m)).orElse(null);
-                if(movie!=null){
+            for (String m : character.getListMovies()) {
+                Movie movie = movieRepository.findById(Long.valueOf(m)).orElse(null);
+                if (movie != null) {
                     listMovie.add(movie);
                 }
             }
-            if (listMovie.isEmpty()){
+            if (listMovie.isEmpty()) {
                 c.setListMovie(new ArrayList<>());
-            }else c.setListMovie(listMovie);
+            } else c.setListMovie(listMovie);
 
             return characterMapper.toResponse(characterRepository.save(c));
         } catch (RuntimeException e) {
-            throw new ErrorProcessException(ERROR_NOT_FOUND +" "+e.getMessage());
+            throw new ErrorProcessException(ERROR_NOT_FOUND + " " + e.getMessage());
         }
     }
 
@@ -112,7 +115,7 @@ public class CharacterServiceImpl implements ICharacterService {
         try {
             return characterMapper.toResponse(characterRepository.findById(id).orElse(null));
         } catch (RuntimeException e) {
-            throw new ErrorProcessException(ERROR_NOT_FOUND +" "+e.getMessage());
+            throw new ErrorProcessException(ERROR_NOT_FOUND + " " + e.getMessage());
         }
     }
 
@@ -120,7 +123,7 @@ public class CharacterServiceImpl implements ICharacterService {
     public CharacterResponse update(Long id, CharacterRequest character) throws ErrorProcessException {
         try {
             Character c = characterRepository.findById(id).orElse(null);
-            if (!Validations.validateCharacterEntity(character))
+            if (Validations.validateCharacterEntity(character))
                 throw new RuntimeException(ERROR_NOT_VALIDATE);
             if (c != null) {
                 c.setName(character.getName());
@@ -130,7 +133,7 @@ public class CharacterServiceImpl implements ICharacterService {
                 return characterMapper.toResponse(c);
             } else throw new NullPointerException("The id entered is incorrect or deleted");
         } catch (RuntimeException e) {
-            throw new ErrorProcessException(ERROR_NOT_FOUND +" "+e.getMessage());
+            throw new ErrorProcessException(ERROR_NOT_FOUND + " " + e.getMessage());
         }
     }
 }

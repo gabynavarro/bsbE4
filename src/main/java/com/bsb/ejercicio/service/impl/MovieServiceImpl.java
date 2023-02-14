@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +48,9 @@ public class MovieServiceImpl implements IMovieService {
         if (title == null )
             throw new NullPointerException("Movie name can't be null or contains invalid characters");
         try {
-            return movieMapper.toMovieResponse(movieRepository.findByTitle(title).orElseThrow());
+            Movie m=movieRepository.findByTitle(title)
+                    .orElseThrow(() -> new NullPointerException("The title is not found in the database"));
+            return movieMapper.toMovieResponse(m);
         } catch (RuntimeException e) {
             throw new ErrorProcessException(ERROR_NOT_FOUND +" "+e.getMessage());
         }
@@ -96,11 +99,12 @@ public class MovieServiceImpl implements IMovieService {
     }
 
     @Override
+    @Transactional
     public MovieResponse movieCreate(MovieRequest movie) throws BadRequestException, ErrorProcessException {
         List<Character> listCharacter = new ArrayList<>();
         if (!Validations.validateMovieEntity(movie)){
             throw new BadRequestException(ERROR_NOT_VALIDATE);}
-        if (movieRepository.findByTitle(movie.getTitle())!=null) {
+        if (movieRepository.findByTitle(movie.getTitle()).orElse(null)!=null) {
             throw new BadRequestException("Movie exist!");
         }
         try {

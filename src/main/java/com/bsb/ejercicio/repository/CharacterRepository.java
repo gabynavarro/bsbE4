@@ -7,15 +7,13 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CharacterRepository extends JpaRepository<Character, Long> {
- //   @Query("select c from Character c where c.name = :name")
-    List<Character> findByName(String name);
-
-  //  @Query("select c from Character c where c.age = :age")
+    Optional<Character> findByName(String name);
     List<Character> findByAge(int age);
 
-    @Query("SELECT c FROM Character c WHERE c.age BETWEEN :since AND :until")
-    List<Character> findByRangeAge( int since, int until);
+    @Query("SELECT c FROM Character c WHERE c.age BETWEEN :of AND :to")
+    List<Character> findByRangeAge( int of, int to);
 }

@@ -17,8 +17,9 @@ import java.util.List;
 public class CharacterController {
     @Autowired
     private ICharacterService characterService;
-    @GetMapping("name")
-    public ResponseEntity<List<CharacterResponse>> getCharacterName(@RequestParam(value = "name", required = false) String name) throws ErrorProcessException {
+
+    @GetMapping("/{name}")
+    public ResponseEntity<CharacterResponse> getCharacterName(@PathVariable String name) throws ErrorProcessException {
         return ResponseEntity.status(HttpStatus.OK).body(characterService.findName(name));
     }
 

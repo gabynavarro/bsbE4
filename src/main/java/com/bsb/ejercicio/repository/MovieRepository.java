@@ -19,7 +19,4 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
     List<Movie> findByDate(LocalDate of, LocalDate to);
     @Query("SELECT m FROM Movie m WHERE m.score BETWEEN :of AND :to")
     List<Movie> findByScore(int of, int to);
-
-  //  Movie findById(Long id);
-
 }

@@ -24,7 +24,7 @@ public class Validations {
         if(movie.getScore()>0&&movie.getScore()<6) return true;
         return false;
     } public static boolean validateCharacterEntity(CharacterRequest character){
-        if(!validationString(character.getName())) return true;
+        if(!validationString(character.getName().replaceAll("\\s",""))) return true;
         if(character.getAge()<0&&character.getAge()>125) return true;
         return false;
     }

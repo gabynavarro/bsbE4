@@ -1,7 +1,9 @@
 package com.bsb.ejercicio.service.impl;
 
 import com.bsb.ejercicio.exception.BadRequestException;
+import com.bsb.ejercicio.exception.ElementNotFound;
 import com.bsb.ejercicio.exception.ErrorProcessException;
+import com.bsb.ejercicio.exception.NotFoundException;
 import com.bsb.ejercicio.model.entity.Character;
 import com.bsb.ejercicio.model.entity.Movie;
 import com.bsb.ejercicio.model.mappers.CharacterMapper;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,10 +45,10 @@ public class CharacterServiceImpl implements ICharacterService {
             if (name == null && !Validations.validationString(name))
                 throw new NullPointerException("Character name can't be null or contains invalid characters");
             Character character = characterRepository.findByName(name)
-                    .orElseThrow(() -> new NullPointerException("The name " + name + " is not found in the database"));
+                    .orElseThrow(() -> new ElementNotFound("The name " + name + " is not found in the database"));
             return characterMapper.toResponse(character);
 
-        } catch (RuntimeException e) {
+        } catch (RuntimeException | ElementNotFound e) {
             throw new ErrorProcessException(ERROR_NOT_FOUND + " " + e.getMessage());
         }
     }
@@ -120,11 +123,12 @@ public class CharacterServiceImpl implements ICharacterService {
     }
 
     @Override
-    public CharacterResponse update(Long id, CharacterRequest character) throws ErrorProcessException {
+    @Transactional
+    public CharacterResponse update(Long id, CharacterRequest character) throws ErrorProcessException, BadRequestException {
+        if (Validations.validateCharacterEntity(character))
+            throw new BadRequestException(ERROR_NOT_VALIDATE);
         try {
             Character c = characterRepository.findById(id).orElse(null);
-            if (Validations.validateCharacterEntity(character))
-                throw new RuntimeException(ERROR_NOT_VALIDATE);
             if (c != null) {
                 c.setName(character.getName());
                 c.setAge(character.getAge());
@@ -135,6 +139,21 @@ public class CharacterServiceImpl implements ICharacterService {
         } catch (RuntimeException e) {
             throw new ErrorProcessException(ERROR_NOT_FOUND + " " + e.getMessage());
         }
+    }
+    @Override
+    @Transactional
+    public void delete(Long id) throws ElementNotFound, ErrorProcessException {
+        Character character = characterRepository.findById(id).orElseThrow(() -> new ElementNotFound("The id " + id + " is not found in the database"));
+        if(character.isSoftDeleted()){
+            throw new ElementNotFound("character not found");
+        }
+        try {
+            character.setSoftDeleted(true);
+            characterRepository.save(character);
+        }catch (RuntimeException e){
+            throw new ErrorProcessException(ERROR_NOT_FOUND + " " + e.getMessage());
+        }
+
     }
 }
 

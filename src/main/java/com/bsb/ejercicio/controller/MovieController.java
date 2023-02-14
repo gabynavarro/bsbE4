@@ -1,6 +1,7 @@
 package com.bsb.ejercicio.controller;
 
 import com.bsb.ejercicio.exception.BadRequestException;
+import com.bsb.ejercicio.exception.ElementNotFound;
 import com.bsb.ejercicio.exception.ErrorProcessException;
 import com.bsb.ejercicio.exception.NotFoundException;
 import com.bsb.ejercicio.model.request.MovieRequest;
@@ -62,5 +63,11 @@ public class MovieController {
             @RequestBody MovieRequest movie,
             @PathVariable Long id) throws ErrorProcessException {
         return ResponseEntity.status(HttpStatus.OK).body(movieService.update(id, movie));
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) throws ErrorProcessException, ElementNotFound {
+        movieService.delete(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+
     }
 }

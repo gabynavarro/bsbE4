@@ -1,6 +1,7 @@
 package com.bsb.ejercicio.service;
 
 import com.bsb.ejercicio.exception.BadRequestException;
+import com.bsb.ejercicio.exception.ElementNotFound;
 import com.bsb.ejercicio.exception.ErrorProcessException;
 import com.bsb.ejercicio.exception.NotFoundException;
 import com.bsb.ejercicio.model.request.MovieRequest;
@@ -19,4 +20,5 @@ public interface IMovieService {
      MovieResponse movieCreate(MovieRequest movie) throws BadRequestException, ErrorProcessException;
      MovieResponse findById(Long id) throws ErrorProcessException;
      MovieResponse update(Long id, MovieRequest movie) throws ErrorProcessException;
+     void delete(Long id) throws ElementNotFound, ErrorProcessException;
 }

@@ -1,7 +1,9 @@
 package com.bsb.ejercicio.controller;
 
 import com.bsb.ejercicio.exception.BadRequestException;
+import com.bsb.ejercicio.exception.ElementNotFound;
 import com.bsb.ejercicio.exception.ErrorProcessException;
+import com.bsb.ejercicio.exception.NotFoundException;
 import com.bsb.ejercicio.model.request.CharacterRequest;
 import com.bsb.ejercicio.model.response.character.CharacterResponse;
 import com.bsb.ejercicio.service.ICharacterService;
@@ -48,7 +50,12 @@ public class CharacterController {
     @PutMapping("/{id}")
     public ResponseEntity<CharacterResponse> update(
             @RequestBody CharacterRequest character,
-            @PathVariable Long id) throws ErrorProcessException {
+            @PathVariable Long id) throws ErrorProcessException, BadRequestException {
         return ResponseEntity.status(HttpStatus.OK).body(characterService.update(id, character));
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletedCharacter(@PathVariable Long id) throws NotFoundException, ErrorProcessException, ElementNotFound {
+        characterService.delete(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

@@ -1,6 +1,7 @@
 package com.bsb.ejercicio.service.impl;
 
 import com.bsb.ejercicio.exception.BadRequestException;
+import com.bsb.ejercicio.exception.ElementNotFound;
 import com.bsb.ejercicio.exception.ErrorProcessException;
 import com.bsb.ejercicio.model.entity.Character;
 import com.bsb.ejercicio.model.entity.Movie;
@@ -14,6 +15,7 @@ import com.bsb.ejercicio.service.IMovieService;
 import com.bsb.ejercicio.validations.Validations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -44,15 +46,15 @@ public class MovieServiceImpl implements IMovieService {
     }
 
     @Override
-    public MovieResponse findTitle(String title) throws ResponseStatusException, ErrorProcessException {
-        if (title == null )
+    public MovieResponse findTitle(String title) throws ErrorProcessException {
+        if (title == null)
             throw new NullPointerException("Movie name can't be null or contains invalid characters");
         try {
-            Movie m=movieRepository.findByTitle(title)
-                    .orElseThrow(() -> new NullPointerException("The title is not found in the database"));
+            Movie m = movieRepository.findByTitle(title)
+                    .orElseThrow(() -> new ElementNotFound("The title is not found in the database"));
             return movieMapper.toMovieResponse(m);
-        } catch (RuntimeException e) {
-            throw new ErrorProcessException(ERROR_NOT_FOUND +" "+e.getMessage());
+        } catch (RuntimeException | ElementNotFound e) {
+            throw new ErrorProcessException(ERROR_NOT_FOUND + " " + e.getMessage());
         }
     }
 
@@ -61,7 +63,7 @@ public class MovieServiceImpl implements IMovieService {
         try {
             return converTo(movieRepository.findAll());
         } catch (RuntimeException e) {
-            throw new ErrorProcessException(ERROR_NOT_FOUND +" "+e.getMessage());
+            throw new ErrorProcessException(ERROR_NOT_FOUND + " " + e.getMessage());
         }
     }
 
@@ -73,28 +75,27 @@ public class MovieServiceImpl implements IMovieService {
         try {
             return converTo(movieRepository.findByGenderName(gender));
         } catch (RuntimeException e) {
-            throw new ErrorProcessException(ERROR_NOT_FOUND +" "+e.getMessage());
+            throw new ErrorProcessException(ERROR_NOT_FOUND + " " + e.getMessage());
         }
     }
 
     @Override
     public List<MovieResponse> findByDate(LocalDate from, LocalDate to) throws ErrorProcessException {
         try {
-            List<Movie> listMovie=movieRepository.findByDate(from,to);
-             return converTo(listMovie);
+            List<Movie> listMovie = movieRepository.findByDate(from, to);
+            return converTo(listMovie);
         } catch (RuntimeException e) {
-            throw new ErrorProcessException(ERROR_NOT_FOUND +" "+e.getMessage());
+            throw new ErrorProcessException(ERROR_NOT_FOUND + " " + e.getMessage());
         }
     }
 
     @Override
     public List<MovieResponse> findByScore(int from, int to) throws ErrorProcessException {
         try {
-            List<Movie> listMovie=movieRepository.findByScore(from,to);
-             return converTo(listMovie);
+            return converTo(movieRepository.findByScore(from, to));
 
         } catch (RuntimeException e) {
-            throw new ErrorProcessException(ERROR_NOT_FOUND +" "+e.getMessage());
+            throw new ErrorProcessException(ERROR_NOT_FOUND + " " + e.getMessage());
         }
     }
 
@@ -102,9 +103,10 @@ public class MovieServiceImpl implements IMovieService {
     @Transactional
     public MovieResponse movieCreate(MovieRequest movie) throws BadRequestException, ErrorProcessException {
         List<Character> listCharacter = new ArrayList<>();
-        if (!Validations.validateMovieEntity(movie)){
-            throw new BadRequestException(ERROR_NOT_VALIDATE);}
-        if (movieRepository.findByTitle(movie.getTitle()).orElse(null)!=null) {
+        if (!Validations.validateMovieEntity(movie)) {
+            throw new BadRequestException(ERROR_NOT_VALIDATE);
+        }
+        if (movieRepository.findByTitle(movie.getTitle()).orElse(null) != null) {
             throw new BadRequestException("Movie exist!");
         }
         try {
@@ -121,7 +123,7 @@ public class MovieServiceImpl implements IMovieService {
             m.setGender(genderRepository.findById(movie.getGender()).orElse(null));
             return movieMapper.toMovieResponse(movieRepository.save(m));
         } catch (RuntimeException e) {
-            throw new ErrorProcessException(ERROR_NOT_FOUND +" "+e.getMessage());
+            throw new ErrorProcessException(ERROR_NOT_FOUND + " " + e.getMessage());
         }
     }
 
@@ -131,11 +133,12 @@ public class MovieServiceImpl implements IMovieService {
             return movieMapper.toMovieResponse(movieRepository.findById(id).orElse(null));
 
         } catch (RuntimeException e) {
-            throw new ErrorProcessException(ERROR_NOT_FOUND +" "+e.getMessage());
+            throw new ErrorProcessException(ERROR_NOT_FOUND + " " + e.getMessage());
         }
     }
 
     @Override
+    @Transactional
     public MovieResponse update(Long id, MovieRequest movie) throws ErrorProcessException {
         if (!Validations.validateMovieEntity(movie))
             throw new RuntimeException(ERROR_NOT_VALIDATE);
@@ -148,7 +151,22 @@ public class MovieServiceImpl implements IMovieService {
                 return movieMapper.toMovieResponse(m);
             } else throw new NullPointerException("The id entered is incorrect or deleted");
         } catch (RuntimeException e) {
-            throw new ErrorProcessException(ERROR_NOT_FOUND +" "+e.getMessage());
+            throw new ErrorProcessException(ERROR_NOT_FOUND + " " + e.getMessage());
+        }
+    }
+
+    @Override
+    @Transactional
+    public void delete(Long id) throws ElementNotFound, ErrorProcessException {
+        Movie movie = movieRepository.findById(id).orElseThrow(() -> new ElementNotFound("The id " + id + " is not found in the database"));
+        if (movie.isSoftDeleted()) {
+            throw new ElementNotFound("movie not found");
+        }
+        try {
+            movie.setSoftDeleted(true);
+            movieRepository.save(movie);
+        } catch (RuntimeException e) {
+            throw new ErrorProcessException(ERROR_NOT_FOUND + " " + e.getMessage());
         }
     }
 }

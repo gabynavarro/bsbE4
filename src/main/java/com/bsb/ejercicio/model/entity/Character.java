@@ -1,6 +1,8 @@
 package com.bsb.ejercicio.model.entity;
 
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.util.List;
@@ -10,6 +12,8 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "characters")
+@SQLDelete(sql = "UPDATE characters SET softDeleted = true WHERE id=?")
+@Where(clause = "soft_deleted = false")
 public class Character {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,6 +23,7 @@ public class Character {
     private Integer age;
     private Double weight;
     private String history;
+    private boolean softDeleted=false;
     @ManyToMany()
     @JoinTable(
             name = "characters_movies",

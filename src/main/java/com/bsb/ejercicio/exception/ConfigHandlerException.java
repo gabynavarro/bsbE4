@@ -10,6 +10,12 @@ import javax.servlet.http.HttpServletRequest;
 @ControllerAdvice
 public class ConfigHandlerException {
 
+    @ExceptionHandler(ElementNotFound.class)
+    public ResponseEntity<?> handleElementNotFound(HttpServletRequest request,
+                                                   ElementNotFound e){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(buildResponse(e, HttpStatus.NOT_FOUND));
+    }
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<?> handleEnteredDataNotFound(HttpServletRequest request,
                                                        NotFoundException e){

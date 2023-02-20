@@ -13,6 +13,7 @@ import com.bsb.ejercicio.repository.GenderRepository;
 import com.bsb.ejercicio.repository.MovieRepository;
 import com.bsb.ejercicio.service.IMovieService;
 import com.bsb.ejercicio.validations.Validations;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 
 
 @Service
+@Slf4j
 public class MovieServiceImpl implements IMovieService {
     private static final String ERROR_NOT_FOUND = "An error occurred in the process";
     private static final String ERROR_NOT_VALIDATE = "The data entered contains erroneous information";
@@ -148,8 +150,10 @@ public class MovieServiceImpl implements IMovieService {
                 m.setTitle(movie.getTitle());
                 m.setDate(movie.getDate());
                 m.setScore(movie.getScore());
-                return movieMapper.toMovieResponse(m);
+                log.info("Movie modificada: "+ m.getTitle().toUpperCase());
+                return movieMapper.toMovieResponse(movieRepository.save(m));
             } else throw new NullPointerException("The id entered is incorrect or deleted");
+
         } catch (RuntimeException e) {
             throw new ErrorProcessException(ERROR_NOT_FOUND + " " + e.getMessage());
         }
@@ -165,6 +169,7 @@ public class MovieServiceImpl implements IMovieService {
         try {
             movie.setSoftDeleted(true);
             movieRepository.save(movie);
+            log.info("La pelicula "+movie.getTitle().toUpperCase() + " fue eliminada");
         } catch (RuntimeException e) {
             throw new ErrorProcessException(ERROR_NOT_FOUND + " " + e.getMessage());
         }

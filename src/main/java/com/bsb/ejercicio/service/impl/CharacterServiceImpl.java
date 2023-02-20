@@ -13,6 +13,7 @@ import com.bsb.ejercicio.repository.CharacterRepository;
 import com.bsb.ejercicio.repository.MovieRepository;
 import com.bsb.ejercicio.service.ICharacterService;
 import com.bsb.ejercicio.validations.Validations;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class CharacterServiceImpl implements ICharacterService {
     private final String ERROR_NOT_FOUND = "An error occurred in the process";
     private final String ERROR_NOT_VALIDATE = "The data entered contains erroneous information";
@@ -134,7 +136,8 @@ public class CharacterServiceImpl implements ICharacterService {
                 c.setAge(character.getAge());
                 c.setHistory(character.getHistory());
                 c.setWeight(character.getWeight());
-                return characterMapper.toResponse(c);
+                log.info("Caracter modificated: "+ c.getName().toUpperCase());
+                return characterMapper.toResponse(characterRepository.save(c));
             } else throw new NullPointerException("The id entered is incorrect or deleted");
         } catch (RuntimeException e) {
             throw new ErrorProcessException(ERROR_NOT_FOUND + " " + e.getMessage());
@@ -150,6 +153,7 @@ public class CharacterServiceImpl implements ICharacterService {
         try {
             character.setSoftDeleted(true);
             characterRepository.save(character);
+            log.info("El character "+character.getName().toUpperCase()+ " fue eliminado");
         }catch (RuntimeException e){
             throw new ErrorProcessException(ERROR_NOT_FOUND + " " + e.getMessage());
         }

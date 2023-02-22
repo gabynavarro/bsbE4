@@ -27,4 +27,7 @@ public class Gender {
             fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Movie> movieOrSeriesLis;
     private boolean softDeleted=false;
+    public void addMovie(Movie m){
+        movieOrSeriesLis.add(m);
+    }
 }

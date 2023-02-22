@@ -1,7 +1,7 @@
 package com.bsb.ejercicio.model.response.Gender;
 
-import com.bsb.ejercicio.model.entity.Movie;
-import com.bsb.ejercicio.model.response.movie.MovieResponse;
+
+import com.bsb.ejercicio.model.response.movie.MovieGenderResponse;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,5 +12,5 @@ import java.util.List;
 public class GenderResponse {
     private Long id;
     private String name;
-    private List<MovieResponse> movieOrSeriesLis;
+    private List<MovieGenderResponse> movieOrSeriesLis;
 }

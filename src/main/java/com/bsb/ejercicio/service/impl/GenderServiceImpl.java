@@ -72,12 +72,12 @@ public class GenderServiceImpl implements IGenderService {
         if (!Validations.validationString(gender.getName()))
             throw new RuntimeException("He entered an invalid name");
         try {
-            Gender m = genderRepository.findById(id).orElse(null);
-            if (m != null) {
-                m.setName(gender.getName());
-                genderRepository.save(m);
-                log.info("Se modifico gender: "+m.getName().toUpperCase());
-                return genderMapper.toResponse(m);
+            Gender g = genderRepository.findById(id).orElse(null);
+            if (g != null) {
+                g.setName(gender.getName());
+                genderRepository.save(g);
+                log.info("Se modifico gender: "+g.getName().toUpperCase());
+                return genderMapper.toResponse(g);
             } else throw new NullPointerException("The id entered is incorrect or deleted");
         } catch (RuntimeException e) {
             throw new ErrorProcessException(ERROR_NOT_FOUND +" "+e.getMessage());

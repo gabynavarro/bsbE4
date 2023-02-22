@@ -114,11 +114,10 @@ public class MovieServiceImpl implements IMovieService {
         }
         try {
             Movie m = movieMapper.toEntity(movie);
-            Gender g=genderRepository.findById(m.getGender().getId()).orElse(null);
-            if(g!=null){
-                List<Movie> newList=g.getMovieOrSeriesLis();
-                newList.add(m);
-                g.setMovieOrSeriesLis(newList);
+            Gender g = genderRepository.findById(movie.getGender()).orElse(null);
+            if (g != null) {
+                System.out.println("la lista esta vacia"+g.getMovieOrSeriesLis().isEmpty());
+                g.addMovie(m);
                 genderRepository.save(g);
             }
 
@@ -159,7 +158,7 @@ public class MovieServiceImpl implements IMovieService {
                 m.setTitle(movie.getTitle());
                 m.setDate(movie.getDate());
                 m.setScore(movie.getScore());
-                log.info("Movie modificada: "+ m.getTitle().toUpperCase());
+                log.info("Movie modificada: " + m.getTitle().toUpperCase());
                 return movieMapper.toMovieResponse(movieRepository.save(m));
             } else throw new NullPointerException("The id entered is incorrect or deleted");
 
@@ -178,7 +177,7 @@ public class MovieServiceImpl implements IMovieService {
         try {
             movie.setSoftDeleted(true);
             movieRepository.save(movie);
-            log.info("La pelicula "+movie.getTitle().toUpperCase() + " fue eliminada");
+            log.info("La pelicula " + movie.getTitle().toUpperCase() + " fue eliminada");
         } catch (RuntimeException e) {
             throw new ErrorProcessException(ERROR_NOT_FOUND + " " + e.getMessage());
         }

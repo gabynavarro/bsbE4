@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,6 +46,9 @@ public class GenderServiceImpl implements IGenderService {
     public GenderResponse genderCreate(GenderRequest gender) throws BadRequestException, ErrorProcessException {
         if (!Validations.validationString(gender.getName().replaceAll("\\s", "")))
             throw new BadRequestException("The gender name is not valid");
+        if (!genderRepository.findByName(gender.getName()).isEmpty())
+            throw new BadRequestException("Gender exist!");
+
         try {
             return genderMapper.toResponse(genderRepository.save(genderMapper.toEntity(gender)));
         } catch (RuntimeException e) {

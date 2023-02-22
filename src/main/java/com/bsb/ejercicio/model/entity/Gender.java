@@ -8,6 +8,7 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Builder
 @Data
@@ -22,5 +23,8 @@ public class Gender {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    @OneToMany(targetEntity=Movie.class,cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<Movie> movieOrSeriesLis;
     private boolean softDeleted=false;
 }

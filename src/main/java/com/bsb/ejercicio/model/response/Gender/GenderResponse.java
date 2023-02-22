@@ -1,4 +1,4 @@
-package com.bsb.ejercicio.model.response;
+package com.bsb.ejercicio.model.response.Gender;
 
 import com.bsb.ejercicio.model.entity.Movie;
 import com.bsb.ejercicio.model.response.movie.MovieResponse;

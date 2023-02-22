@@ -2,8 +2,9 @@ package com.bsb.ejercicio.model.mappers;
 
 import com.bsb.ejercicio.model.entity.Movie;
 import com.bsb.ejercicio.model.request.MovieRequest;
+import com.bsb.ejercicio.model.response.Gender.GenderMovieResponse;
 import com.bsb.ejercicio.model.response.character.CharacterMovieResponse;
-import com.bsb.ejercicio.model.response.GenderResponse;
+import com.bsb.ejercicio.model.response.Gender.GenderResponse;
 import com.bsb.ejercicio.model.response.movie.MovieResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -37,7 +38,7 @@ public class MovieMapper {
                 .title(movie.getTitle())
                 .date(movie.getDate())
                 .score(movie.getScore())
-                .gender(GenderResponse.builder()
+                .gender(GenderMovieResponse.builder()
                         .id(movie.getGender().getId())
                         .name(movie.getGender().getName())
                         .build())

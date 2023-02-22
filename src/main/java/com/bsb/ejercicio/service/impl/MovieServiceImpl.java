@@ -4,6 +4,7 @@ import com.bsb.ejercicio.exception.BadRequestException;
 import com.bsb.ejercicio.exception.ElementNotFound;
 import com.bsb.ejercicio.exception.ErrorProcessException;
 import com.bsb.ejercicio.model.entity.Character;
+import com.bsb.ejercicio.model.entity.Gender;
 import com.bsb.ejercicio.model.entity.Movie;
 import com.bsb.ejercicio.model.mappers.MovieMapper;
 import com.bsb.ejercicio.model.request.MovieRequest;
@@ -111,6 +112,14 @@ public class MovieServiceImpl implements IMovieService {
         }
         try {
             Movie m = movieMapper.toEntity(movie);
+            Gender g=genderRepository.findById(m.getGender().getId()).orElse(null);
+            if(g!=null){
+                List<Movie> newList=g.getMovieOrSeriesLis();
+                newList.add(m);
+                g.setMovieOrSeriesLis(newList);
+                genderRepository.save(g);
+            }
+
             for (String c : movie.getIdCharacters()) {
                 Character character = characterRepository.findById(Long.valueOf(c)).orElse(null);
                 if (character != null) {

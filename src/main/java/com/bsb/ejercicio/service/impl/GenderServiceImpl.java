@@ -5,7 +5,7 @@ import com.bsb.ejercicio.exception.ErrorProcessException;
 import com.bsb.ejercicio.model.entity.Gender;
 import com.bsb.ejercicio.model.mappers.GenderMapper;
 import com.bsb.ejercicio.model.request.GenderRequest;
-import com.bsb.ejercicio.model.response.GenderResponse;
+import com.bsb.ejercicio.model.response.Gender.GenderResponse;
 import com.bsb.ejercicio.repository.GenderRepository;
 import com.bsb.ejercicio.service.IGenderService;
 import com.bsb.ejercicio.validations.Validations;
@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

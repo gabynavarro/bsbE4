@@ -3,7 +3,7 @@ package com.bsb.ejercicio.service;
 import com.bsb.ejercicio.exception.BadRequestException;
 import com.bsb.ejercicio.exception.ErrorProcessException;
 import com.bsb.ejercicio.model.request.GenderRequest;
-import com.bsb.ejercicio.model.response.GenderResponse;
+import com.bsb.ejercicio.model.response.Gender.GenderResponse;
 
 import java.util.List;
 

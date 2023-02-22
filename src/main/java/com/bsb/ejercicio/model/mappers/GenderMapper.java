@@ -2,7 +2,7 @@ package com.bsb.ejercicio.model.mappers;
 
 import com.bsb.ejercicio.model.entity.Gender;
 import com.bsb.ejercicio.model.request.GenderRequest;
-import com.bsb.ejercicio.model.response.GenderResponse;
+import com.bsb.ejercicio.model.response.Gender.GenderResponse;
 import com.bsb.ejercicio.model.response.movie.MovieResponse;
 import org.springframework.stereotype.Component;
 

@@ -9,6 +9,7 @@ import com.bsb.ejercicio.model.response.Gender.GenderResponse;
 import com.bsb.ejercicio.repository.GenderRepository;
 import com.bsb.ejercicio.service.IGenderService;
 import com.bsb.ejercicio.validations.Validations;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class GenderServiceImpl implements IGenderService {
     private final String ERROR_NOT_FOUND = "An error occurred in the process";
     @Autowired
@@ -67,12 +69,14 @@ public class GenderServiceImpl implements IGenderService {
     @Override
     @Transactional
     public GenderResponse update(Long id, GenderRequest gender) throws ErrorProcessException {
+        if (!Validations.validationString(gender.getName()))
+            throw new RuntimeException("He entered an invalid name");
         try {
             Gender m = genderRepository.findById(id).orElse(null);
-            if (!Validations.validationString(gender.getName()))
-                throw new RuntimeException("He entered an invalid name");
             if (m != null) {
                 m.setName(gender.getName());
+                genderRepository.save(m);
+                log.info("Se modifico gender: "+m.getName().toUpperCase());
                 return genderMapper.toResponse(m);
             } else throw new NullPointerException("The id entered is incorrect or deleted");
         } catch (RuntimeException e) {

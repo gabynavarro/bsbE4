@@ -2,9 +2,8 @@ package com.bsb.ejercicio.controller;
 
 import com.bsb.ejercicio.exception.BadRequestException;
 import com.bsb.ejercicio.exception.ErrorProcessException;
-import com.bsb.ejercicio.model.entity.Gender;
 import com.bsb.ejercicio.model.request.GenderRequest;
-import com.bsb.ejercicio.model.response.GenderResponse;
+import com.bsb.ejercicio.model.response.Gender.GenderResponse;
 import com.bsb.ejercicio.service.IGenderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

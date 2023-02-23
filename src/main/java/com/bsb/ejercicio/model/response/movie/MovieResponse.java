@@ -1,7 +1,8 @@
 package com.bsb.ejercicio.model.response.movie;
 
 
-import com.bsb.ejercicio.model.response.GenderResponse;
+import com.bsb.ejercicio.model.response.Gender.GenderMovieResponse;
+import com.bsb.ejercicio.model.response.Gender.GenderResponse;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,5 +18,5 @@ public class MovieResponse {
     private LocalDate date;
     private int score;
     private List<MovieCharacterResponse> characters;
-    private GenderResponse gender;
+    private GenderMovieResponse gender;
 }

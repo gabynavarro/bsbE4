@@ -116,7 +116,6 @@ public class MovieServiceImpl implements IMovieService {
             Movie m = movieMapper.toEntity(movie);
             Gender g = genderRepository.findById(movie.getGender()).orElse(null);
             if (g != null) {
-                System.out.println("la lista esta vacia"+g.getMovieOrSeriesLis().isEmpty());
                 g.addMovie(m);
                 genderRepository.save(g);
             }

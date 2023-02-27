@@ -30,6 +30,15 @@ public class Movie {
     @OneToOne
     private Gender gender;
 
+    public Movie(Long id, String title, LocalDate date, int score, List<Character> character, Gender gender) {
+        this.id = id;
+        this.title = title;
+        this.date = date;
+        this.score = score;
+        this.character = character;
+        this.gender = gender;
+    }
+
     public Movie(Long id, String title, LocalDate date, int score, Gender gender) {
         this.id = id;
         this.title = title;
@@ -37,10 +46,17 @@ public class Movie {
         this.score = score;
         this.gender = gender;
     }
+    public Movie(String title, LocalDate date, int score, Gender gender) {
+        this.title = title;
+        this.date = date;
+        this.score = score;
+        this.gender = gender;
+    }
 
-    public Movie(String title, LocalDate date, int i) {
+    public Movie(String title, LocalDate date, int i, boolean b) {
         this.title = title;
         this.date = date;
         this.score = i;
+        this.softDeleted=b;
     }
 }

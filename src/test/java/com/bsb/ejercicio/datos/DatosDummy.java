@@ -10,9 +10,9 @@ import java.util.Arrays;
 import java.util.List;
 
 public class DatosDummy {
-    public static final String[] nameCharater = {"Robert-Downey", "Chris-Evans", "Chris-Hemsworth",
-            "Paul-Rudd", "Michael-Douglas",
-            "Guy-Pearce", "Don-Cheadle"
+    public static final String[] nameCharater = {"Robert Downey", "Chris Evans", "Chris Hemsworth",
+            "Paul Rudd", "Michael Douglas",
+            "Guy Pearce", "Don Cheadle"
     };
     public static final String[] descriptionCharacter = {"Earth's mightiest heroes must come together and learn to fight as a team if they are to stop the mischievous Loki and his alien army from enslaving humanity...",
             "Earth's mightiest heroes must come together and learn to fight as a team if they are to stop the mischievous Loki and his alien army from enslaving humanity...",
@@ -40,14 +40,12 @@ public class DatosDummy {
 
     public static Character onlyCahracter() {
         return Character.builder()
-                .id(null)
+
                 .age(45)
                 .history(descriptionCharacter[0])
                 .weight(62.5)
-                .name(nameCharater[0])
-                .listMovie(Arrays.asList(
-                        new Movie(titleMovie[0], date[0], 5, false),
-                        new Movie(titleMovie[1], date[1], 3, false)))
+                .name("Jorge Perez")
+                .listMovie(new ArrayList<>())
                 .build();
     }
 

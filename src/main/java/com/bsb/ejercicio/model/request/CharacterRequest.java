@@ -1,14 +1,14 @@
 package com.bsb.ejercicio.model.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
 @Setter
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class CharacterRequest {
 
     private String name;

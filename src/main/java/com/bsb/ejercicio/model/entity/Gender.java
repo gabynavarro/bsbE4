@@ -30,4 +30,9 @@ public class Gender {
     public void addMovie(Movie m){
         movieOrSeriesLis.add(m);
     }
+
+    public Gender(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 }

@@ -75,17 +75,17 @@ public class DatosDummy {
 
         return Arrays.asList(
                 new Movie(1L, titleMovie[0], date[0], 3,
-                        Arrays.asList(new Character(nameCharater[0]), new Character(nameCharater[1]), new Character(nameCharater[2])),
-                        listGender.get(0)),
+                       new ArrayList<>(),
+                      null),
                 new Movie(2L, titleMovie[1], date[1], 2,
-                        Arrays.asList(new Character(nameCharater[0]), new Character(nameCharater[1]), new Character(nameCharater[2])),
-                        listGender.get(1)),
+                       new ArrayList<>(),
+                        null),
                 new Movie(3L, titleMovie[2], date[2], 5,
-                        Arrays.asList(new Character(nameCharater[3]), new Character(nameCharater[4])),
-                        listGender.get(2)),
+                        new ArrayList<>(),
+                        null),
                 new Movie(4L, titleMovie[3], date[3], 4,
-                        Arrays.asList(new Character(nameCharater[5]), new Character(nameCharater[6])),
-                        listGender.get(3))
+                        new ArrayList<>(),
+                        null)
         );
     }
 }

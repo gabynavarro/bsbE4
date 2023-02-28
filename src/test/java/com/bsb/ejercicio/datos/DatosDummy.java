@@ -10,21 +10,21 @@ import java.util.Arrays;
 import java.util.List;
 
 public class DatosDummy {
-    private static final String[] nameCharater = {"Robert-Downey", "Chris-Evans", "Chris-Hemsworth",
+    public static final String[] nameCharater = {"Robert-Downey", "Chris-Evans", "Chris-Hemsworth",
             "Paul-Rudd", "Michael-Douglas",
             "Guy-Pearce", "Don-Cheadle"
     };
-    private static final String[] descriptionCharacter = {"Earth's mightiest heroes must come together and learn to fight as a team if they are to stop the mischievous Loki and his alien army from enslaving humanity...",
+    public static final String[] descriptionCharacter = {"Earth's mightiest heroes must come together and learn to fight as a team if they are to stop the mischievous Loki and his alien army from enslaving humanity...",
             "Earth's mightiest heroes must come together and learn to fight as a team if they are to stop the mischievous Loki and his alien army from enslaving humanity...",
             "Armed with a super-suit with the astonishing ability to shrink in scale but increase in strength, cat burglar Scott Lang must embrace his inner hero and help...",
             "When Tony Stark's world is torn apart by a formidable terrorist called the Mandarin, he starts an odyssey of rebuilding and retribution."
     };
 
-    private static final String[] titleMovie = {"Oblivion",
+    public static final String[] titleMovie = {"Oblivion",
             "Titanic",
             "IronMan",
             "Mulholland"};
-    private static final LocalDate[] date = {
+    public static final LocalDate[] date = {
             LocalDate.parse("2012-01-08"),
             LocalDate.parse("2014-08-15"),
             LocalDate.parse("2015-02-15"),
@@ -32,40 +32,41 @@ public class DatosDummy {
 
     public static List<Gender> addGender() {
         return Arrays.asList(
-                new Gender(1L, "Suspenso",new ArrayList<>(),false),
-                new Gender(2L, "Terror",new ArrayList<>(),false),
-                new Gender(3L, "Suspenso",new ArrayList<>(),false),
-                new Gender(4L, "Comedia",new ArrayList<>(),false));
+                new Gender(1L, "Suspenso", new ArrayList<>(), false),
+                new Gender(2L, "Terror", new ArrayList<>(), false),
+                new Gender(3L, "Suspenso", new ArrayList<>(), false),
+                new Gender(4L, "Comedia", new ArrayList<>(), false));
     }
 
+    public static Character onlyCahracter() {
+        return Character.builder()
+                .id(null)
+                .age(45)
+                .history(descriptionCharacter[0])
+                .weight(62.5)
+                .name(nameCharater[0])
+                .listMovie(Arrays.asList(
+                        new Movie(titleMovie[0], date[0], 5, false),
+                        new Movie(titleMovie[1], date[1], 3, false)))
+                .build();
+    }
 
     public static List<Character> addCharacter() {
         return Arrays.asList(
                 new Character(1L, nameCharater[0], 63, 65.5, descriptionCharacter[0],
-                        Arrays.asList(
-                                new Movie(titleMovie[0], date[0], 5, false),
-                                new Movie(titleMovie[1], date[1], 3, false))),
+                       new ArrayList<>()),
                 new Character(2L, nameCharater[1], 63, 62.7, descriptionCharacter[0],
-                        Arrays.asList(
-                                new Movie(titleMovie[0], date[0], 5, false),
-                                new Movie(titleMovie[1], date[1], 3, false))),
+                        new ArrayList<>()),
                 new Character(3L, nameCharater[2], 31, 58.3, descriptionCharacter[0],
-                        Arrays.asList(
-                                new Movie(titleMovie[0], date[0], 5, false),
-                                new Movie(titleMovie[1], date[1], 3, false))),
+                       new ArrayList<>()),
                 new Character(4L, nameCharater[3], 65, 68.7, descriptionCharacter[1],
-                        Arrays.asList(
-                                new Movie(titleMovie[2], date[0], 4, false))),
+                       new ArrayList<>()),
                 new Character(5L, nameCharater[4], 52, 64.7, descriptionCharacter[1],
-                        Arrays.asList(
-                                new Movie(titleMovie[2], date[2], 4, false),
-                                new Movie(titleMovie[3], date[3], 5, false))),
+                       new ArrayList<>()),
                 new Character(6L, nameCharater[5], 36, 72.5, descriptionCharacter[2],
-                        Arrays.asList(
-                                new Movie(titleMovie[3], date[3], 5, false))),
+                        new ArrayList<>()),
                 new Character(7L, nameCharater[6], 38, 82.5, descriptionCharacter[2],
-                        Arrays.asList(
-                                new Movie(titleMovie[3], date[3], 5, false)))
+                        new ArrayList<>())
         );
     }
 

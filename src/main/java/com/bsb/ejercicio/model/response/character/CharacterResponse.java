@@ -1,9 +1,7 @@
 package com.bsb.ejercicio.model.response.character;
 
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import com.bsb.ejercicio.model.entity.Character;
 
 import java.util.ArrayList;
@@ -12,6 +10,7 @@ import java.util.List;
 @Builder
 @Setter
 @Getter
+@AllArgsConstructor @NoArgsConstructor
 public class CharacterResponse {
     private Long id;
     private String name;

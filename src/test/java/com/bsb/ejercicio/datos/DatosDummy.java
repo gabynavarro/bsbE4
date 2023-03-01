@@ -40,7 +40,7 @@ public class DatosDummy {
 
     public static Character onlyCahracter() {
         return Character.builder()
-
+                .id(1L)
                 .age(45)
                 .history(descriptionCharacter[0])
                 .weight(62.5)

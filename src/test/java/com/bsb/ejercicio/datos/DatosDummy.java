@@ -10,8 +10,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class DatosDummy {
-    public static final String[] nameCharater = {"Robert Downey", "Chris Evans", "Chris Hemsworth",
-            "Paul Rudd", "Michael Douglas",
+    public static final String[] nameCharater = {"Gabriel", "Chris Evans", "Chris Hemsworth",
+            "Paul-Rudd", "Michael Douglas",
             "Guy Pearce", "Don Cheadle"
     };
     public static final String[] descriptionCharacter = {"Earth's mightiest heroes must come together and learn to fight as a team if they are to stop the mischievous Loki and his alien army from enslaving humanity...",
@@ -40,19 +40,22 @@ public class DatosDummy {
 
     public static Character onlyCahracter() {
         return Character.builder()
-
+                .id(1L)
                 .age(45)
                 .history(descriptionCharacter[0])
                 .weight(62.5)
-                .name("Jorge Perez")
+                .name("Jorge-Perez")
                 .listMovie(new ArrayList<>())
                 .build();
     }
-
+/* Arrays.asList(
+         new Movie(titleMovie[0], date[1], 4, false ),
+                               new Movie(titleMovie[0], date[1], 3, false )
+                               )*/
     public static List<Character> addCharacter() {
         return Arrays.asList(
                 new Character(1L, nameCharater[0], 63, 65.5, descriptionCharacter[0],
-                       new ArrayList<>()),
+                      new ArrayList<>()),
                 new Character(2L, nameCharater[1], 63, 62.7, descriptionCharacter[0],
                         new ArrayList<>()),
                 new Character(3L, nameCharater[2], 31, 58.3, descriptionCharacter[0],

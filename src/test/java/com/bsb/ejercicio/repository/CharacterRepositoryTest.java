@@ -19,7 +19,8 @@ import static org.assertj.core.api.Assertions.*;
 class CharacterRepositoryTest {
     @Autowired
     private CharacterRepository characterRepository;
-
+    @Autowired
+    private MovieRepository movieRepository;
     //construccion de dummy
     @BeforeEach
     void setUp() {
@@ -30,7 +31,7 @@ class CharacterRepositoryTest {
 
     @AfterEach
     void tearDown() {
-        characterRepository.deleteAll();
+       // characterRepository.deleteAll();
     }
 
     @Test
@@ -38,14 +39,15 @@ class CharacterRepositoryTest {
         //GIVEN
         /* Contecto  de persistencia*/
 
-        String test_name = "Robert-Downey";
+        String test_name = "Paul-Rudd";
         //WHEN
         /* Cuando lo vamos usar aa  nuestro codigo */
-        Optional<Character> c = characterRepository.findByName(DatosDummy.onlyCahracter().getName());
+        Character c = characterRepository.findByName(test_name).orElse(null);
+
         //THEN
         /*Lo que queremos probar*/
-        assertThat(c.isPresent()).isTrue();
-        assertThat(c.get().getName())
+        assertThat(c!=null).isTrue();
+        assertThat(c.getName())
                 .isEqualTo(test_name);
     }
 

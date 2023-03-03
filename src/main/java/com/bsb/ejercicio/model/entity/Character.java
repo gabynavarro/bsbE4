@@ -1,5 +1,7 @@
 package com.bsb.ejercicio.model.entity;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -14,14 +16,19 @@ import java.util.List;
 @Table(name = "characters")
 @SQLDelete(sql = "UPDATE characters SET softDeleted = true WHERE id=?")
 @Where(clause = "soft_deleted = false")
+@ApiModel("Model Character")
 public class Character {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 
     private Long id;
+    @ApiModelProperty("Character name")
     private String name;
+    @ApiModelProperty("character age ")
     private Integer age;
+    @ApiModelProperty("character weight in kg")
     private Double weight;
+    @ApiModelProperty("brief description of the history of the character")
     private String history;
     private boolean softDeleted=false;
 

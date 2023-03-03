@@ -43,9 +43,9 @@ public class CharacterServiceImpl implements ICharacterService {
 
     @Override
     public CharacterResponse findName(String name) throws ErrorProcessException {
+        if (name == null || !Validations.validationString(name))
+            throw new NullPointerException("Character name can't be null or contains invalid characters");
         try {
-            if (name == null && !Validations.validationString(name))
-                throw new NullPointerException("Character name can't be null or contains invalid characters");
             Character character = characterRepository.findByName(name)
                     .orElseThrow(() -> new ElementNotFound("The name " + name + " is not found in the database"));
             return characterMapper.toResponse(character);
@@ -108,8 +108,8 @@ public class CharacterServiceImpl implements ICharacterService {
             if (listMovie.isEmpty()) {
                 c.setListMovie(new ArrayList<>());
             } else c.setListMovie(listMovie);
-
-            return characterMapper.toResponse(characterRepository.save(c));
+            Character ch=characterRepository.save(c);
+            return characterMapper.toResponse(c);
         } catch (RuntimeException e) {
             throw new ErrorProcessException(ERROR_NOT_FOUND + " " + e.getMessage());
         }

@@ -18,7 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/character")
-@Api(value = "Character Controller", tags = "actions allowed for characters")
+@Api(value = "Character Controller", tags = "Actions allowed for characters")
 public class CharacterController {
     @Autowired
     private ICharacterService characterService;

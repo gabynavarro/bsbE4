@@ -18,7 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/gender")
-@Api(value = "Gender Controller", tags = "actions allowed for genders")
+@Api(value = "Gender Controller", tags = "Actions allowed for genders")
 public class GenderController {
     @Autowired
     private IGenderService genderService;

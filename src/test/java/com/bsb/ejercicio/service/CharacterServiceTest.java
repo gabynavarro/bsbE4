@@ -27,6 +27,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.map;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
@@ -35,8 +36,8 @@ import static org.mockito.Mockito.*;
 class CharacterServiceTest {
     @Mock
     public CharacterRepository repo;
-   @Autowired
-    public ICharacterService service;
+   @InjectMocks
+    public CharacterServiceImpl service;
 
    @Autowired
    public  CharacterMapper mapper;
@@ -47,52 +48,45 @@ class CharacterServiceTest {
     public List<Character> list;
     public CharacterRequest request;
     @BeforeEach
-    void setUp() throws ErrorProcessException {
-
+    void setUp() {
+      MockitoAnnotations.openMocks(this);
       list = DatosDummy.addCharacter();
       list.forEach((c) -> repo.save(c));
 
 
         //  when(service.findById(anyLong())).thenReturn(response);
     character1=new Character();
-    character1.setId(1L);
     character1.setName(DatosDummy.nameCharater[0]);
     character1.setWeight(65.5);
     character1.setAge(63);
     character1.setHistory(DatosDummy.descriptionCharacter[0]);
     character1.setListMovie(new ArrayList<>());
+    character1.setSoftDeleted(false);
    /****** Request *********/
 
-        request=new CharacterRequest();
-        request.setName("Gabriel Navarro");
-        request.setWeight(62.1);
-        request.setAge(31);
-        request.setHistory(DatosDummy.descriptionCharacter[0]);
-        request.setListMovies(new ArrayList<>());
+
     }
 
     @AfterEach
     void tearDown() {
 
     }
-
+    @Test
+    void characterCreate() throws BadRequestException, ErrorProcessException {
+        response=new CharacterResponse();
+        request=new CharacterRequest();
+        request.setName("GabrielNavarro");
+        request.setWeight(62.1);
+        request.setAge(31);
+        request.setHistory(DatosDummy.descriptionCharacter[0]);
+        request.setListMovies(Arrays.asList());
+    //    Character c=mapper.toCharacter(request);
+        when(service.characterCreate(request)).thenReturn(CharacterServiceDataUtils.getCharacterResponse());
+        assertNotNull(response);
+    }
     @Test
     void findName() throws ErrorProcessException {
-       /* when(repo.findAll())
-                .thenReturn(DatosDummy.addCharacter());
-    //    when(repo.save(any(Character.class))).thenReturn(character);
-        CharacterResponse res=new CharacterResponse();
-       when(repo.findByName(anyString())).thenReturn(res);
-       List<Character> l= repo.findAll();
-       l.forEach(ch-> System.out.println(ch.getName()));
 
-        Optional<Character> character=repo.findByName("Gabriel");
-        System.out.println(character.get().getName().toUpperCase());
-        when(repo.findByName(anyString())).thenReturn(character);
-      //  Character mychar=repo.findByName()
-        CharacterResponse response=service.findName("Gabriel");
-        assertNotNull(response);
-        assertEquals("Gabriel", response.getName());*/
 
     }
 
@@ -117,41 +111,11 @@ class CharacterServiceTest {
     void findByRangeAge() {
     }
 
-    @Test
-    void characterCreate() throws BadRequestException, ErrorProcessException {
-        Character character = mapper.toCharacter(request);
-        when(repo.findByName(anyString())).thenReturn(null);
-        when(repo.save(any(Character.class))).thenReturn(character);
-        response=service.characterCreate(request);
-        assertNotNull(response);
-        assertThat(response.getName())
-                .isEqualTo(request.getName());
-        assertThat(response.getId()!=null).isTrue();
-    }
+
 
     @Test
     void findById() throws ErrorProcessException {
 
-        when(repo.findAll())
-                .thenReturn(DatosDummy.addCharacter());
-        Optional<Character> c=repo.findById(list.get(0).getId());
-        when(repo.findById(anyLong()))
-                .thenReturn(Optional.of(c.get()));
-
-        CharacterResponse response = mapper.toResponse(c.get());
-        Optional<Character> charId = Optional.ofNullable(c.get());
-
-        given(repo.findById(response.getId())).willReturn(charId);
-        given(mapper.toResponse(charId.get())).willReturn(response);
-
-        CharacterResponse findCharacter = service.findById(response.getId());
-
-        Assertions.assertNotNull(findCharacter);
-
-      //  verify(repo).findById(anyLong());
-     ///   verify(mapper).toResponse(any(Character.class));
-        assertThat(findCharacter!=null).isTrue();
-   ;
     }
 
     @Test

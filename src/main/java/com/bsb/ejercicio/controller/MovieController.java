@@ -7,6 +7,7 @@ import com.bsb.ejercicio.exception.NotFoundException;
 import com.bsb.ejercicio.model.request.MovieRequest;
 import com.bsb.ejercicio.model.response.movie.MovieResponse;
 import com.bsb.ejercicio.service.IMovieService;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/movie")
+@Api(value = "Movie Controller", tags = "actions allowed for movies")
 public class MovieController {
     @Autowired
     private IMovieService movieService;

@@ -3,6 +3,7 @@ package com.bsb.ejercicio.datos;
 import com.bsb.ejercicio.model.entity.Gender;
 import com.bsb.ejercicio.model.entity.Movie;
 import com.bsb.ejercicio.model.entity.Character;
+import com.bsb.ejercicio.model.response.movie.MovieResponse;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -37,6 +38,10 @@ public class DatosDummy {
                 new Gender(3L, "Suspenso", new ArrayList<>(), false),
                 new Gender(4L, "Comedia", new ArrayList<>(), false));
     }
+    public static Movie onlyMovie(){
+        return new Movie(1L, "Oblivion", date[0], 3,new Gender());
+               // new Movie(1L, "Titanic", LocalDate.of(2022, 2, 1), 4);
+    }
 
     public static Character onlyCahracter() {
         return Character.builder()
@@ -48,10 +53,29 @@ public class DatosDummy {
                 .listMovie(new ArrayList<>())
                 .build();
     }
-/* Arrays.asList(
-         new Movie(titleMovie[0], date[1], 4, false ),
-                               new Movie(titleMovie[0], date[1], 3, false )
-                               )*/
+    public static Movie getMovieOne(){
+        return  new Movie(1L, "movie1", LocalDate.of(2022, 2, 1), Boolean.FALSE);}
+
+    public static Movie getMovieTwo(){
+        return  new Movie(2L, "movie2", LocalDate.of(2022, 6, 1), Boolean.FALSE);
+
+    }
+    public static Movie getMovieThree() {
+        return new Movie(3L, "movie3", LocalDate.of(2023, 6, 1), Boolean.FALSE);
+    }
+    public static List<Movie> getAllMovie() {return new ArrayList<>(Arrays.asList(
+            new Movie(1L, "movie1", LocalDate.of(2022, 2, 1), Boolean.FALSE),
+            new Movie(1L, "movie1", LocalDate.of(2022, 2, 1), Boolean.FALSE),
+            new Movie(1L, "movie1", LocalDate.of(2022, 2, 1), Boolean.FALSE)));}
+
+    public static MovieResponse movieTestResponse(Movie m){
+        return MovieResponse.builder()
+                .id(m.getId())
+                .title(m.getTitle())
+                .date(m.getDate())
+                .score(m.getScore())
+                .build();
+    }
     public static List<Character> addCharacter() {
         return Arrays.asList(
                 new Character(1L, nameCharater[0], 63, 65.5, descriptionCharacter[0],
@@ -77,16 +101,16 @@ public class DatosDummy {
         return Arrays.asList(
                 new Movie(1L, titleMovie[0], date[0], 3,
                        new ArrayList<>(),
-                      null),
+                      new Gender()),
                 new Movie(2L, titleMovie[1], date[1], 2,
                        new ArrayList<>(),
-                        null),
+                        new Gender()),
                 new Movie(3L, titleMovie[2], date[2], 5,
                         new ArrayList<>(),
-                        null),
+                        new Gender()),
                 new Movie(4L, titleMovie[3], date[3], 4,
                         new ArrayList<>(),
-                        null)
+                        new Gender())
         );
     }
 }

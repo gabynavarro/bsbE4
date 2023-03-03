@@ -54,6 +54,12 @@ public class Movie {
         this.score = score;
         this.gender = gender;
     }
+    public Movie(long id, String title, LocalDate date, boolean b) {
+        this.title = title;
+        this.date = date;
+
+        this.softDeleted=b;
+    }
     public Movie(String title, LocalDate date, int score, Gender gender) {
         this.title = title;
         this.date = date;
@@ -61,10 +67,5 @@ public class Movie {
         this.gender = gender;
     }
 
-    public Movie(String title, LocalDate date, int i, boolean b) {
-        this.title = title;
-        this.date = date;
-        this.score = i;
-        this.softDeleted=b;
-    }
+
 }

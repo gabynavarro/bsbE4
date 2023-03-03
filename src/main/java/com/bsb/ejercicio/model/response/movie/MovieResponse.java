@@ -5,9 +5,7 @@ import com.bsb.ejercicio.model.response.Gender.GenderMovieResponse;
 import com.bsb.ejercicio.model.response.Gender.GenderResponse;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -15,6 +13,7 @@ import java.util.List;
 @Setter
 @Getter
 @ApiModel(value = "MovieResponse", description = "response of models movie")
+@AllArgsConstructor @NoArgsConstructor
 public class MovieResponse {
     @ApiModelProperty(name = "id",
             value = "id movie",

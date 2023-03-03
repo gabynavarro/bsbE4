@@ -108,8 +108,8 @@ public class CharacterServiceImpl implements ICharacterService {
             if (listMovie.isEmpty()) {
                 c.setListMovie(new ArrayList<>());
             } else c.setListMovie(listMovie);
-
-            return characterMapper.toResponse(characterRepository.save(c));
+            Character ch=characterRepository.save(c);
+            return characterMapper.toResponse(c);
         } catch (RuntimeException e) {
             throw new ErrorProcessException(ERROR_NOT_FOUND + " " + e.getMessage());
         }

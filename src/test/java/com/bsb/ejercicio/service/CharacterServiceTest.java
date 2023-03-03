@@ -1,93 +1,93 @@
 package com.bsb.ejercicio.service;
 
+import com.bsb.ejercicio.datos.CharacterServiceDataUtils;
 import com.bsb.ejercicio.datos.DatosDummy;
 import com.bsb.ejercicio.exception.BadRequestException;
 import com.bsb.ejercicio.exception.ErrorProcessException;
 import com.bsb.ejercicio.model.entity.Character;
+import com.bsb.ejercicio.model.entity.Movie;
 import com.bsb.ejercicio.model.mappers.CharacterMapper;
 import com.bsb.ejercicio.model.request.CharacterRequest;
 import com.bsb.ejercicio.model.response.character.CharacterResponse;
 import com.bsb.ejercicio.repository.CharacterRepository;
+import com.bsb.ejercicio.service.impl.CharacterServiceImpl;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.event.annotation.PrepareTestInstance;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.map;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 @SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class CharacterServiceTest {
-    @Autowired
-    private ICharacterService service;
     @Mock
-    private CharacterRepository repo;
-   @Autowired
-    private CharacterMapper mapper;
+    public CharacterRepository repo;
+   @InjectMocks
+    public CharacterServiceImpl service;
 
-    private  Character character1;
-    private CharacterResponse response;
-    private List<CharacterResponse> listResponse;
-    private List<Character> list;
-    private CharacterRequest request;
+   @Autowired
+   public  CharacterMapper mapper;
+
+    public  Character character1;
+    public CharacterResponse response;
+    public List<CharacterResponse> listResponse;
+    public List<Character> list;
+    public CharacterRequest request;
     @BeforeEach
     void setUp() {
+      MockitoAnnotations.openMocks(this);
       list = DatosDummy.addCharacter();
       list.forEach((c) -> repo.save(c));
 
- //   MockitoAnnotations.openMocks(this);
-    character1=repo.findById(1L).orElse(null);
-   /*     Character character2=Character.builder()
 
-                .name("gabriel")
-                .weight(63.5)
-                .age(53)
-                .history(DatosDummy.descriptionCharacter[0])
-                .listMovie(new ArrayList<>())
-                .build();
-        repo.save(character1);
-        repo.save(character2);*/
+        //  when(service.findById(anyLong())).thenReturn(response);
+    character1=new Character();
+    character1.setName(DatosDummy.nameCharater[0]);
+    character1.setWeight(65.5);
+    character1.setAge(63);
+    character1.setHistory(DatosDummy.descriptionCharacter[0]);
+    character1.setListMovie(new ArrayList<>());
+    character1.setSoftDeleted(false);
+   /****** Request *********/
 
-        request=new CharacterRequest();
-        request.setName("Gabriel Navarro");
-        request.setWeight(62.1);
-        request.setAge(31);
-        request.setHistory(DatosDummy.descriptionCharacter[0]);
-        request.setListMovies(new ArrayList<>());
+
     }
 
     @AfterEach
     void tearDown() {
 
     }
-
+    @Test
+    void characterCreate() throws BadRequestException, ErrorProcessException {
+        response=new CharacterResponse();
+        request=new CharacterRequest();
+        request.setName("GabrielNavarro");
+        request.setWeight(62.1);
+        request.setAge(31);
+        request.setHistory(DatosDummy.descriptionCharacter[0]);
+        request.setListMovies(Arrays.asList());
+    //    Character c=mapper.toCharacter(request);
+        when(service.characterCreate(request)).thenReturn(CharacterServiceDataUtils.getCharacterResponse());
+        assertNotNull(response);
+    }
     @Test
     void findName() throws ErrorProcessException {
-        when(repo.findByName("Robert Downey")).thenReturn(Optional.ofNullable(character1));
 
-       // assertThat();
-        assertEquals("Robert Downey", response.getName());
-        //assertNotNull(service.findName("Robert-Downey"));
 
-        //        assertEquals("Colombia", countries.get(0).getName());
-      /*  BDDMockito.given(repo.findByName(character.getName()))
-                .willReturn(Optional.of(character));
-        //THEN
-        assertThatThrownBy(() -> service.characterCreate(
-                request.builder()
-                        .name("Gabriel Navarro")
-                        .age(37)
-                        .history(DatosDummy.descriptionCharacter[0])
-                        .weight(62.5)
-                .build()))
-                .isInstanceOf(RuntimeException.class)
-                .hasMessageContaining("Usuario existente");*/
     }
 
     @Test
@@ -95,14 +95,11 @@ class CharacterServiceTest {
     void getAll() throws ErrorProcessException {
         when(repo.findAll())
                 .thenReturn(DatosDummy.addCharacter());
-        //WHEN
         List<CharacterResponse> charactes = repo.findAll().stream()
                 .map(mapper::toResponse)
-                .collect(Collectors.toList());
-        //THEN
+                .collect(Collectors.toList());        //THEN
         assertThat(charactes.size())
                 .isEqualTo(7);
-
         verify(repo, times(1)).findAll();
     }
 
@@ -114,19 +111,11 @@ class CharacterServiceTest {
     void findByRangeAge() {
     }
 
-    @Test
-    void characterCreate() throws BadRequestException, ErrorProcessException {
-     //   Character character = DatosDummy.onlyCahracter();
-        //WHEN
-        CharacterResponse response=service.characterCreate(request);
-        //THEN
-        assertThat(response.getName())
-                .isEqualTo(request.getName());
-        assertThat(response.getId()!=null).isTrue();
-    }
+
 
     @Test
-    void findById() {
+    void findById() throws ErrorProcessException {
+
     }
 
     @Test

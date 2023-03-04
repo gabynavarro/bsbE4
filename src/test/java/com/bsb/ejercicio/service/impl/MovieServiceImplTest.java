@@ -1,20 +1,27 @@
 package com.bsb.ejercicio.service.impl;
 
 import com.bsb.ejercicio.datos.DatosDummy;
+import com.bsb.ejercicio.exception.BadRequestException;
 import com.bsb.ejercicio.exception.ErrorProcessException;
 import com.bsb.ejercicio.exception.NotFoundException;
+import com.bsb.ejercicio.model.entity.Gender;
 import com.bsb.ejercicio.model.entity.Movie;
 import com.bsb.ejercicio.model.mappers.MovieMapper;
 import com.bsb.ejercicio.model.request.MovieRequest;
 import com.bsb.ejercicio.model.response.movie.MovieResponse;
+import com.bsb.ejercicio.repository.GenderRepository;
 import com.bsb.ejercicio.repository.MovieRepository;
+import com.bsb.ejercicio.service.IGenderService;
 import com.bsb.ejercicio.service.IMovieService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -26,11 +33,16 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class MovieServiceImplTest {
-    @Mock
-    private MovieRepository repo;
+    @MockBean
+    MovieRepository repo;
+    @MockBean
+    GenderRepository genderRepository;
+    @MockBean
+    IGenderService gender;
     @Autowired
     private MovieMapper mapper;
     @Autowired
@@ -43,8 +55,9 @@ class MovieServiceImplTest {
 
     @BeforeEach
     void setUp() {
-    //    list = DatosDummy.getAllMovie();
-    //    list.forEach((c) -> repo.save(c));
+        list = DatosDummy.addMovie();
+        list.forEach((c) -> repo.save(c));
+        listResponse = list.stream().map(DatosDummy::movieTestResponse).collect(Collectors.toList());
     }
 
     @AfterEach
@@ -52,67 +65,115 @@ class MovieServiceImplTest {
     }
 
     @Test
+    @DisplayName("Find by Title")
     void findTitle() throws ErrorProcessException {
         String title = "movie1";
-        movie = DatosDummy.getMovieOne();
-
-        response = new MovieResponse();
-        /*  Set response comparar con result */
-        when(repo.findByTitle(title)).thenReturn(Optional.of(movie));
-        mapper.toResponse(movie);
-        MovieResponse result = service.findTitle(title);
-        assertEquals(result.getTitle(), "movie1");
-        assertNotNull(result);
-        verify(repo).findByTitle(title);
-
-
+        when(repo.findByTitle(title)).thenReturn(Optional.of(DatosDummy.getMovieOne()));
+        response = service.findTitle(title);
+        assertThat(response != null).isTrue();
+        assertEquals(response.getTitle(), DatosDummy.getMovieOne().getTitle());
+        verify(repo).findByTitle(anyString());
     }
 
     @Test
+    @DisplayName("Find all movie")
     void getAll() throws NotFoundException, ErrorProcessException {
-        list = DatosDummy.getAllMovie();
-        when(repo.findAll()).thenReturn(DatosDummy.getAllMovie());
-        listResponse = service.getAll();
-        assertThat(listResponse.size()).isEqualTo(4);
-        assertEquals(list, listResponse);
-        verify(repo, times(1)).findAll();
-
+        when(repo.findAll())
+                .thenReturn(DatosDummy.getAllMovie());
+        List<MovieResponse> result = service.getAll();
+        assertThat(result.size() > 1).isTrue();
+        assertEquals(result.size(), DatosDummy.getAllMovie().size());
+        verify(this.repo).findAll();
     }
 
     @Test
-    void findByGender() {
+    @DisplayName("Find by Gender")
+    void findByGender() throws ErrorProcessException {
+        Gender gender = DatosDummy.oneGender();
+        when(repo.findByGenderName(gender.getName())).thenReturn(DatosDummy.getAllMovie());
+        listResponse = service.findByGender(gender.getName());
+        assertNotNull(listResponse);
+        assertEquals(listResponse.get(0).getGender().getName(), gender.getName());
+        assertThat(listResponse.size()).isEqualTo(3);
+        verify(repo).findByGenderName(anyString());
     }
 
     @Test
+    @DisplayName("Find by date")
     void findByDate() throws ErrorProcessException {
-
-        listResponse=DatosDummy.getAllMovie()
-                .stream()
-                .map(DatosDummy::movieTestResponse)
-                .collect(Collectors.toList());
-
         LocalDate from = LocalDate.of(2022, 1, 1);
         LocalDate to = LocalDate.of(2022, 12, 31);
-
         when(repo.findByDate(from, to)).thenReturn(DatosDummy.getAllMovie());
-
         List<MovieResponse> result = service.findByDate(from, to);
-     //   assertNotNull(result);
-   //     assertThat(result).hasSize(3);
-        verify(repo).findByDate(from,to);
-        assertEquals(listResponse,result);
+        assertThat(result != null).isTrue();
+        assertThat(result.isEmpty()).isFalse();
+        assertEquals(result.get(0).getDate(), DatosDummy.getAllMovie().get(0).getDate());
+        verify(repo)
+                .findByDate(any(LocalDate.class), any(LocalDate.class));
     }
 
     @Test
-    void movieCreate() {
+    @DisplayName("Create movie")
+    void movieCreate() throws BadRequestException, ErrorProcessException {
+        request = MovieRequest.builder()
+                .date(LocalDate.parse("2012-01-08"))
+                .title("Oso")
+                .score(3)
+                .idCharacters(Arrays.asList("1", "3"))
+                .gender(1)
+                .build();
+
+        Movie myMovie = Movie.builder()
+                .date(LocalDate.parse("2012-01-08"))
+                .title("Oso")
+                .score(3)
+                .gender(new Gender())
+                .character(new ArrayList<>())
+                .build();
+        when(repo.save(any(Movie.class))).thenReturn(myMovie);
+        MovieResponse result = service.movieCreate(request);
+        assertThat(result != null).isTrue();
+        assertEquals(result.getTitle(), request.getTitle());
+        verify(repo).findByTitle(anyString());
+        verify(genderRepository).findById(anyLong());
     }
 
     @Test
-    void findById() {
+    @DisplayName("Find by id movie")
+    void findById() throws BadRequestException, ErrorProcessException {
+        movie = Movie.builder()
+                .id(1L)
+                .date(LocalDate.parse("2012-01-08"))
+                .title("Oso")
+                .score(3)
+                .gender(new Gender())
+                .character(new ArrayList<>())
+                .build();
+
+        when(repo.findById(anyLong())).thenReturn(Optional.of(DatosDummy.getMovieOne()));
+        MovieResponse result = service.findById(movie.getId());
+        assertNotNull(result);
+        assertEquals(result.getId(), movie.getId());
+        verify(repo).findById(anyLong());
     }
 
     @Test
-    void update() {
+    @DisplayName("update movie by id")
+    void update() throws ErrorProcessException {
+        request = MovieRequest.builder()
+                .date(LocalDate.parse("2012-01-08"))
+                .title("Oso")
+                .score(3)
+                .gender(1)
+                .idCharacters(new ArrayList<>())
+                .build();
+        movie = DatosDummy.getMovieOne();
+        when(repo.findById(anyLong())).thenReturn(Optional.ofNullable(movie));
+        when(repo.save(any(Movie.class))).thenReturn(movie);
+        MovieResponse result = service.update(DatosDummy.getMovieOne().getId(), request);
+        assertNotNull(result);
+        assertEquals(result.getTitle(), "Oso");
+        verify(repo).findById(anyLong());
     }
 
 }

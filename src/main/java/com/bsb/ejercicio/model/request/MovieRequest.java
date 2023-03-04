@@ -4,6 +4,7 @@ import com.bsb.ejercicio.model.entity.Character;
 import com.bsb.ejercicio.model.entity.Gender;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,6 +12,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Getter @Setter
+@Builder
 @ApiModel(value = "CharacterRequest", description = "Format for creating and updating character")
 public class MovieRequest {
     @ApiModelProperty(name = "Title",

@@ -38,6 +38,9 @@ public class DatosDummy {
                 new Gender(3L, "Suspenso", new ArrayList<>(), false),
                 new Gender(4L, "Comedia", new ArrayList<>(), false));
     }
+    public static Gender oneGender(){
+        return new Gender(1L, "Suspenso", new ArrayList<>(), false);
+    }
     public static Movie onlyMovie(){
         return new Movie(1L, "Oblivion", date[0], 3,new Gender());
                // new Movie(1L, "Titanic", LocalDate.of(2022, 2, 1), 4);
@@ -49,12 +52,13 @@ public class DatosDummy {
                 .age(45)
                 .history(descriptionCharacter[0])
                 .weight(62.5)
-                .name("Jorge-Perez")
+                .name("Jorge Perez")
                 .listMovie(new ArrayList<>())
                 .build();
     }
     public static Movie getMovieOne(){
-        return  new Movie(1L, "movie1", LocalDate.of(2022, 2, 1), Boolean.FALSE);}
+        Gender gender=oneGender();
+        return  new Movie(1L, "movie1", LocalDate.of(2022, 2, 1),3, gender);}
 
     public static Movie getMovieTwo(){
         return  new Movie(2L, "movie2", LocalDate.of(2022, 6, 1), Boolean.FALSE);
@@ -63,10 +67,13 @@ public class DatosDummy {
     public static Movie getMovieThree() {
         return new Movie(3L, "movie3", LocalDate.of(2023, 6, 1), Boolean.FALSE);
     }
-    public static List<Movie> getAllMovie() {return new ArrayList<>(Arrays.asList(
-            new Movie(1L, "movie1", LocalDate.of(2022, 2, 1), Boolean.FALSE),
-            new Movie(1L, "movie1", LocalDate.of(2022, 2, 1), Boolean.FALSE),
-            new Movie(1L, "movie1", LocalDate.of(2022, 2, 1), Boolean.FALSE)));}
+    public static List<Movie> getAllMovie() {
+        Gender gender=oneGender();
+        return new ArrayList<>(Arrays.asList(
+                //Long id, String title, LocalDate date, int score, Gender gender
+            new Movie(1L, "movie1", LocalDate.of(2022, 2, 1),3, gender),
+                new Movie(2L, "movie2", LocalDate.of(2022, 2, 1),4, gender),
+                new Movie(3L, "movie3", LocalDate.of(2022, 2, 1),5, gender)));}
 
     public static MovieResponse movieTestResponse(Movie m){
         return MovieResponse.builder()
@@ -78,7 +85,7 @@ public class DatosDummy {
     }
     public static List<Character> addCharacter() {
         return Arrays.asList(
-                new Character(1L, nameCharater[0], 63, 65.5, descriptionCharacter[0],
+                new Character(1L, nameCharater[0], 45, 65.5, descriptionCharacter[0],
                       new ArrayList<>()),
                 new Character(2L, nameCharater[1], 63, 62.7, descriptionCharacter[0],
                         new ArrayList<>()),

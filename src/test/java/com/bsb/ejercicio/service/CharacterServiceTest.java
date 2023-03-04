@@ -8,12 +8,14 @@ import com.bsb.ejercicio.model.mappers.CharacterMapper;
 import com.bsb.ejercicio.model.request.CharacterRequest;
 import com.bsb.ejercicio.model.response.character.CharacterResponse;
 import com.bsb.ejercicio.repository.CharacterRepository;
+import com.bsb.ejercicio.repository.GenderRepository;
 import com.bsb.ejercicio.service.impl.CharacterServiceImpl;
 import org.junit.jupiter.api.*;
 import org.mockito.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,11 +28,11 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 @SpringBootTest
 class CharacterServiceTest {
-    @InjectMocks
-    private CharacterServiceImpl service;
-    @Mock
+    @Autowired
+    private ICharacterService service;
+    @MockBean
     private CharacterRepository repo;
-    @Mock
+    @Autowired
     private CharacterMapper mapper;
 
     private  Character character1;
@@ -44,15 +46,6 @@ class CharacterServiceTest {
       list = DatosDummy.addCharacter();
       list.forEach((c) -> repo.save(c));
 
- //   MockitoAnnotations.openMocks(this);
-    character1=repo.findById(1L).orElse(null);
-
-        request=new CharacterRequest();
-        request.setName("Gabriel Navarro");
-        request.setWeight(62.1);
-        request.setAge(31);
-        request.setHistory(DatosDummy.descriptionCharacter[0]);
-      //  request.setListMovies(new ArrayList<>());
     }
 
     @AfterEach
@@ -61,26 +54,15 @@ class CharacterServiceTest {
     }
 
     @Test
+    @DisplayName("Find by Name")
     void findName() throws ErrorProcessException {
-        when(repo.findByName("Robert Downey")).thenReturn(Optional.ofNullable(character1));
-
-       // assertThat();
-        assertEquals("Robert Downey", response.getName());
-        //assertNotNull(service.findName("Robert-Downey"));
-
-        //        assertEquals("Colombia", countries.get(0).getName());
-      /*  BDDMockito.given(repo.findByName(character.getName()))
-                .willReturn(Optional.of(character));
-        //THEN
-        assertThatThrownBy(() -> service.characterCreate(
-                request.builder()
-                        .name("Gabriel Navarro")
-                        .age(37)
-                        .history(DatosDummy.descriptionCharacter[0])
-                        .weight(62.5)
-                .build()))
-                .isInstanceOf(RuntimeException.class)
-                .hasMessageContaining("Usuario existente");*/
+        String name=DatosDummy.onlyCahracter().getName();
+        when(repo.findByName(name)).thenReturn(Optional.ofNullable(DatosDummy.onlyCahracter()));
+        response=service.findName(name);
+        assertThat(response!=null).isTrue();
+        assertEquals(response.getName(),name);
+        assertEquals(name, response.getName());
+        verify(repo).findByName(anyString());
     }
 
     @Test
@@ -88,11 +70,9 @@ class CharacterServiceTest {
     void getAll() throws ErrorProcessException {
         when(repo.findAll())
                 .thenReturn(DatosDummy.addCharacter());
-        //WHEN
         List<CharacterResponse> charactes = repo.findAll().stream()
                 .map(mapper::toResponse)
                 .collect(Collectors.toList());
-        //THEN
         assertThat(charactes.size())
                 .isEqualTo(7);
 
@@ -100,43 +80,56 @@ class CharacterServiceTest {
     }
 
     @Test
-    void findByAge() {
+    @DisplayName("Find by age")
+    void findByAge() throws ErrorProcessException {
+        int age=45;
+        when(repo.findByAge(anyInt())).thenReturn(DatosDummy.addCharacter());
+        listResponse=service.findByAge(age);
+        assertThat(listResponse!=null).isTrue();
+        assertThat(listResponse.isEmpty()).isFalse();
+        assertThat(listResponse.size()>0).isTrue();
+        assertThat(listResponse.get(0).getAge()==age).isTrue();
+        verify(repo).findByAge(anyInt());
+    }
+    @Test
+    @DisplayName("Find by range age")
+    void findByRangeAge() throws ErrorProcessException {
+        int from=45;
+        int to=52;
+        when(repo.findByRangeAge(from,to)).thenReturn(DatosDummy.addCharacter());
+        listResponse=service.findByRangeAge(from,to);
+        assertThat(listResponse.size()>1).isTrue();
+        assertThat(listResponse.get(1).getAge()>=from).isTrue();
+        verify(repo).findByRangeAge(anyInt(),anyInt());
     }
 
     @Test
-    void findByRangeAge() {
-    }
-
-    @Test
+    @DisplayName("create character")
     void characterCreate() throws BadRequestException, ErrorProcessException {
+        request=CharacterRequest.builder()
+                .name("Gabriel")
+                .age(52)
+                .weight(60.3)
+                .history(DatosDummy.descriptionCharacter[0])
+                .listMovies(new ArrayList<>())
+                .build();
 
-        CharacterResponse response=service.characterCreate(request);
-        given(CharacterResponse.toEnty(response)).willReturn(character1);
-        given((repo.save(CharacterResponse.toEnty(response)))).willAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
-        Assertions.assertNotNull(response);
-        assertThat(response.getName())
-                .isEqualTo(request.getName());
-        assertThat(response.getId()!=null).isTrue();
+        character1=DatosDummy.onlyCahracter();
+        when(repo.save(any(Character.class))).thenReturn(character1);
+        response=service.characterCreate(request);
+        assertThat(response != null).isTrue();
+        assertEquals(response.getName(),request.getName());
     }
 
     @Test
+    @DisplayName("Find by id character")
     void findById() throws ErrorProcessException {
-
-        CharacterResponse response = new CharacterResponse();
-        Optional<Character> findById = Optional.of(DatosDummy.onlyCahracter());
-
-        given(repo.findById(response.getId())).willReturn(findById);
-        given(mapper.toResponse(findById.get())).willReturn(response);
-    //    CharacterResponse findNews = service.findById(list.get(0).getId());
-    //    Assertions.assertNotNull(findNews);
-
+        character1=DatosDummy.onlyCahracter();
+        when(repo.findById(character1.getId())).thenReturn(Optional.ofNullable(DatosDummy.onlyCahracter()));
+        response=service.findById(character1.getId());
+        assertNotNull(response);
+        assertEquals(response.getId(),character1.getId());
         verify(repo).findById(anyLong());
-        verify(mapper).toResponse(any(Character.class));
     }
-
-    @Test
-    void update() {
-    }
-
 
 }

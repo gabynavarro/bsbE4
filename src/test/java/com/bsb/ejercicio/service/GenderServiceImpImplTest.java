@@ -9,6 +9,7 @@ import com.bsb.ejercicio.model.response.Gender.GenderResponse;
 import com.bsb.ejercicio.repository.GenderRepository;
 import com.bsb.ejercicio.service.impl.GenderServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -37,13 +38,12 @@ public class GenderServiceImpImplTest {
 
     @BeforeEach
         // Esto se inicia primero por la anotacion
-    void setUp(){
+    void setUp() {
         /*
          * Esto es necesario para que Mockito pueda instanciar los Mock Objects
          * e Inyectar en el objeto GenderServiceImpl
          */
         MockitoAnnotations.openMocks(this);
-
         gender = new Gender();
         gender.setId(1L);
         gender.setName("Romance");
@@ -54,6 +54,7 @@ public class GenderServiceImpImplTest {
     }
 
     @Test
+    @DisplayName("Find by Name")
     void testGetGenderByName() throws NotFoundException {
         // Simular la llamada al método toLookFor usando el objeto genderRepository simulado
         when(genderRepository.toLookFor(anyString())).thenReturn(gender);
@@ -61,18 +62,14 @@ public class GenderServiceImpImplTest {
         assertNotNull(response);
         assertEquals("Romance", response.getName());
     }
-
-
     @Test
-    void altaGenero() throws BadRequestException {
+    @DisplayName("create gender")
+    void addGenero() throws BadRequestException {
         gender = genderMapper.toEntity(request);
-
         when(genderRepository.findByName(anyString())).thenReturn(null);
         when(genderRepository.save(any(Gender.class))).thenReturn(gender);
         response = genderMapper.toResponse(gender);
-
         assertNotNull(response);
         assertEquals(gender.getName(), response.getName());
-
     }
 }

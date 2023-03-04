@@ -26,7 +26,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -114,12 +114,12 @@ public class MovieServiceImpl implements IMovieService {
         }
         try {
             Movie m = movieMapper.toEntity(movie);
-            Gender g = genderRepository.findById(movie.getGender()).orElse(null);
-            if (g != null) {
-                g.addMovie(m);
-                genderRepository.save(g);
-            }
-
+            Optional<Gender> g = genderRepository.findById(movie.getGender());
+            if (g.isPresent()) {
+                g.get().addMovie(m);
+                genderRepository.save(g.get());
+                m.setGender(g.get());
+            }else m.setGender(new Gender());
             for (String c : movie.getIdCharacters()) {
                 Character character = characterRepository.findById(Long.valueOf(c)).orElse(null);
                 if (character != null) {
@@ -129,7 +129,6 @@ public class MovieServiceImpl implements IMovieService {
             if (listCharacter.isEmpty()) {
                 m.setCharacter(new ArrayList<>());
             } else m.setCharacter(listCharacter);
-            m.setGender(genderRepository.findById(movie.getGender()).orElse(null));
             return movieMapper.toMovieResponse(movieRepository.save(m));
         } catch (RuntimeException e) {
             throw new ErrorProcessException(ERROR_NOT_FOUND + " " + e.getMessage());

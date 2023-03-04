@@ -60,12 +60,7 @@ public class Movie {
 
         this.softDeleted=b;
     }
-    public Movie(String title, LocalDate date, int score, Gender gender) {
-        this.title = title;
-        this.date = date;
-        this.score = score;
-        this.gender = gender;
-    }
+
 
 
 }

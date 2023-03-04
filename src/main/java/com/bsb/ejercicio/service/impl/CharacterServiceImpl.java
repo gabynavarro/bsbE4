@@ -43,7 +43,7 @@ public class CharacterServiceImpl implements ICharacterService {
 
     @Override
     public CharacterResponse findName(String name) throws ErrorProcessException {
-        if (name == null || !Validations.validationString(name))
+        if (name == null || Validations.validationString(name))
             throw new NullPointerException("Character name can't be null or contains invalid characters");
         try {
             Character character = characterRepository.findByName(name)
